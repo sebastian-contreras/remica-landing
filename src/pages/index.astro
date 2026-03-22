@@ -6,15 +6,40 @@ import Features from "../components/Features.astro";
 import Testimonials from "../components/Testimonials.astro";
 import Newsletter from "../components/Newsletter.astro";
 import Footer from "../components/Footer.astro";
+
+const homeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Rumica',
+  url: 'https://rumica.com.ar/',
+  description:
+    'Software a medida, automatizaciones con n8n y chatbots para empresas y organismos.',
+  areaServed: 'Argentina',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Tucuman',
+    addressCountry: 'AR',
+  },
+  serviceType: [
+    'Desarrollo de software a medida',
+    'Automatizaciones con n8n',
+    'Chatbots para empresas',
+    'Integracion de sistemas',
+  ],
+};
 ---
 
-<Layout title="Inicio - Rumica">
+<Layout
+  title="Software a medida, automatizaciones y chatbots para empresas"
+  description="Rumica desarrolla software a medida, automatizaciones con n8n y chatbots para empresas y organismos de Tucuman, el NOA y toda Argentina."
+  structuredData={homeSchema}
+>
   <Header />
   <main>
-    <div id="Inicio">
+    <div id="inicio">
       <Hero />
     </div>
-    <div id="Servicios">
+    <div id="servicios">
       <Features />
     </div>
 

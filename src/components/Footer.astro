@@ -5,29 +5,29 @@ const footerLinks = [
   {
     title: "Servicios",
     links: [
-      { text: "Desarrollo a medida",       url: "#servicios" },
-      { text: "Automatizaciones con n8n",  url: "#servicios" },
-      { text: "Chatbots e IA",             url: "#servicios" },
-      { text: "Comunicación masiva",       url: "#servicios" },
-      { text: "Consultoría tecnológica",   url: "#servicios" },
+      { text: "Desarrollo a medida",       url: "/#servicios" },
+      { text: "Automatizaciones con n8n",  url: "/#servicios" },
+      { text: "Chatbots e IA",             url: "/#servicios" },
+      { text: "Comunicación masiva",       url: "/#servicios" },
+      { text: "Consultoría tecnológica",   url: "/#servicios" },
     ]
   },
   {
     title: "Portafolio",
     links: [
-      { text: "Sistemas financieros",      url: "#portafolio" },
-      { text: "SaaS de gestión de moras",  url: "#portafolio" },
-      { text: "Plataformas de movilidad",  url: "#portafolio" },
-      { text: "Sistemas comerciales",      url: "#portafolio" },
+      { text: "Sistemas financieros",      url: "/portafolio#financiera" },
+      { text: "SaaS de gestión de moras",  url: "/portafolio#moras" },
+      { text: "Plataformas de movilidad",  url: "/portafolio#viajes" },
+      { text: "Sistemas comerciales",      url: "/portafolio#ventas" },
     ]
   },
   {
     title: "Empresa",
     links: [
-      { text: "Quiénes somos",             url: "/nosotros" },
-      { text: "Proceso de trabajo",        url: "#proceso" },
-      { text: "Contacto",                  url: "#contacto" },
-      { text: "Política de privacidad",    url: "/privacidad" },
+      { text: "Quiénes somos",             url: "/company" },
+      { text: "Proceso de trabajo",        url: "/#servicios" },
+      { text: "Contacto",                  url: "/#contacto" },
+      { text: "Política de privacidad",    url: "/privacy-policy" },
     ]
   }
 ];
@@ -172,7 +172,7 @@ const stack = ["Laravel", "React", "PostgreSQL", "n8n", "WhatsApp API", "Chatbot
         <span>Tucumán, Argentina</span>
       </div>
 
-      <a href="#contacto" class="btn-primary text-sm py-2 px-5">
+        <a href="/#contacto" class="btn-primary text-sm py-2 px-5">
         Hablemos de tu proyecto →
       </a>
     </div>
@@ -186,12 +186,12 @@ const stack = ["Laravel", "React", "PostgreSQL", "n8n", "WhatsApp API", "Chatbot
       </p>
 
       <div class="flex items-center gap-5 order-1 sm:order-2">
-        <a href="/privacidad"
+        <a href="/privacy-policy"
            class="text-xs text-secondary-600 hover:text-secondary-400 transition-colors">
           Política de privacidad
         </a>
         <span class="text-primary-900 select-none">·</span>
-        <a href="/terminos"
+        <a href="/terms-conditions"
            class="text-xs text-secondary-600 hover:text-secondary-400 transition-colors">
           Términos de servicio
         </a>

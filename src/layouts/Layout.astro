@@ -2,30 +2,87 @@
 import '../styles/global.css';
 import '../styles/transitions.css';
 import { ClientRouter } from 'astro:transitions';
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_TITLE,
+  ORGANIZATION_SCHEMA,
+  SITE_NAME,
+  WEBSITE_SCHEMA,
+} from '../lib/seo';
 
 export interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  image?: string;
+  canonical?: string;
+  noindex?: boolean;
+  keywords?: string[];
+  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
+  type?: 'website' | 'article';
 }
 
 const { 
-  title, 
-  description = "Modern SaaS landing page template with responsive design and modular sections."
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  image = DEFAULT_OG_IMAGE,
+  canonical,
+  noindex = false,
+  keywords = DEFAULT_KEYWORDS,
+  structuredData = [],
+  type = 'website',
 } = Astro.props;
+
+const resolvedCanonical = canonical ?? new URL(Astro.url.pathname, Astro.site).toString();
+const resolvedImage = new URL(image, Astro.site).toString();
+const metaTitle = title === DEFAULT_TITLE ? title : `${title} | ${SITE_NAME}`;
+const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
+const schema = [
+  ORGANIZATION_SCHEMA,
+  WEBSITE_SCHEMA,
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: metaTitle,
+    description,
+    url: resolvedCanonical,
+    inLanguage: 'es-AR',
+  },
+  ...(Array.isArray(structuredData) ? structuredData : [structuredData]),
+].filter(Boolean);
 ---
 
 <!doctype html>
-<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
+<html lang="es-AR" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content={robotsContent} />
     <meta name="description" content={description} />
-    <title>{title}</title>
+    <meta name="keywords" content={keywords.join(', ')} />
+    <meta name="author" content={SITE_NAME} />
+    <meta name="theme-color" content="#2c1810" />
+    <link rel="canonical" href={resolvedCanonical} />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={resolvedCanonical} />
+    <meta property="og:image" content={resolvedImage} />
+    <meta property="og:image:alt" content={metaTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={metaTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedImage} />
+    <title>{metaTitle}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <ClientRouter />
   </head>
   <body class="antialiased bg-white dark:bg-secondary-950 text-secondary-900 dark:text-secondary-100 transition-colors duration-300">
