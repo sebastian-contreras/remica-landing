@@ -1,0 +1,312 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* ─── Rumica · PRIMARY: Terracota ─────────────────────────── */
+  --color-primary-50:  #fdf2ee;
+  --color-primary-100: #fae0d5;
+  --color-primary-200: #f4bcaa;
+  --color-primary-300: #eb8f76;
+  --color-primary-400: #de6044;
+  --color-primary-500: #B5451B;   /* Terracota profundo — principal */
+  --color-primary-600: #993a16;
+  --color-primary-700: #7d2f11;
+  --color-primary-800: #6B3A2A;   /* Tierra oscura */
+  --color-primary-900: #3e1a0e;
+  --color-primary-950: #2C1810;   /* Obsidiana */
+
+  /* ─── Rumica · SECONDARY: Piedra y arena ─────────────────── */
+  --color-secondary-50:  #faf8f5;
+  --color-secondary-100: #F5E6D3;   /* Crema arena */
+  --color-secondary-200: #D4C4B0;   /* Piedra caliza */
+  --color-secondary-300: #c0ad97;
+  --color-secondary-400: #a8927a;
+  --color-secondary-500: #8B7B6B;   /* Roca gris */
+  --color-secondary-600: #72624f;
+  --color-secondary-700: #5a4c3b;
+  --color-secondary-800: #3d3226;
+  --color-secondary-900: #2C1810;   /* Obsidiana */
+  --color-secondary-950: #1a0e08;
+
+  /* ─── Rumica · ACCENT: Naranja NOA + Oro andino ──────────── */
+  --color-accent-50:  #fff8f0;
+  --color-accent-100: #feedd8;
+  --color-accent-200: #fcd6ae;
+  --color-accent-300: #f9ba7a;
+  --color-accent-400: #E07B39;   /* Naranja NOA — acento principal */
+  --color-accent-500: #c96528;
+  --color-accent-600: #b05219;
+  --color-accent-700: #D4A017;   /* Oro andino — acento secundario */
+  --color-accent-800: #b88a12;
+  --color-accent-900: #8a680d;
+  --color-accent-950: #5c4508;
+
+  /* ─── Rumica · ORO: Para highlights y badges ─────────────── */
+  --color-gold-50:  #fffbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #D4A017;   /* Oro andino */
+  --color-gold-500: #b88a12;
+  --color-gold-600: #92690d;
+  --color-gold-700: #7a5409;
+  --color-gold-800: #623f07;
+  --color-gold-900: #422905;
+  --color-gold-950: #231604;
+
+  /* ─── TIPOGRAFÍA ─────────────────────────────────────────── */
+  --font-sans:    Outfit, Inter, system-ui, sans-serif;
+  --font-display: Outfit, Inter, system-ui, sans-serif;
+  --font-mono:    'DM Mono', 'Courier New', monospace;
+
+  /* ─── ANIMACIONES ────────────────────────────────────────── */
+  --animate-fade-in:   fadeIn   0.5s ease-in-out;
+  --animate-slide-up:  slideUp  0.5s ease-in-out;
+  --animate-slide-down: slideDown 0.5s ease-in-out;
+
+  @keyframes fadeIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    0%   { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes slideDown {
+    0%   { transform: translateY(-20px); opacity: 0; }
+    100% { transform: translateY(0);     opacity: 1; }
+  }
+}
+
+/* ─── BORDER COLOR DEFAULT ───────────────────────────────────── */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-secondary-200, currentcolor);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BOTONES
+   ───────────────────────────────────────────────────────────── */
+
+/* Base */
+@utility btn {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-hidden;
+}
+
+/* Terracota sólido — CTA principal */
+@utility btn-primary {
+  @apply btn bg-primary-500 hover:bg-primary-600 text-white shadow-md hover:shadow-lg;
+}
+
+/* Oscuro / obsidiana — CTA secundario */
+@utility btn-secondary {
+  @apply btn bg-primary-950 hover:bg-primary-900 text-white shadow-md hover:shadow-lg;
+}
+
+/* Naranja NOA — acento / destacado */
+@utility btn-accent {
+  @apply btn bg-accent-400 hover:bg-accent-500 text-white shadow-md hover:shadow-lg;
+}
+
+/* Oro andino — para premios, badges, CTAs especiales */
+@utility btn-gold {
+  @apply btn bg-gold-400 hover:bg-gold-500 text-primary-950 shadow-md hover:shadow-lg;
+}
+
+/* Outline terracota — alternativo */
+@utility btn-outline {
+  @apply btn border-2 border-primary-500 dark:border-primary-400
+         hover:bg-primary-50 dark:hover:bg-primary-950
+         text-primary-600 dark:text-primary-300;
+}
+
+/* Ghost sobre fondo oscuro — nav links, etc */
+@utility btn-ghost {
+  @apply btn border border-secondary-200 dark:border-secondary-700
+         hover:bg-secondary-100 dark:hover:bg-secondary-800
+         text-secondary-800 dark:text-secondary-100;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LAYOUT
+   ───────────────────────────────────────────────────────────── */
+
+@utility container-custom {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+}
+
+@utility section {
+  @apply py-16 md:py-24;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CARDS
+   ───────────────────────────────────────────────────────────── */
+
+/* Card base — blanco/oscuro */
+@utility card {
+  @apply bg-white dark:bg-secondary-900 rounded-xl shadow-md
+         hover:shadow-lg transition-shadow duration-300 overflow-hidden
+         border border-secondary-200 dark:border-secondary-800;
+}
+
+/* Card arena — secciones de fondo cálido */
+@utility card-warm {
+  @apply bg-secondary-100 dark:bg-secondary-900 rounded-xl
+         border border-secondary-200 dark:border-secondary-800
+         overflow-hidden transition-shadow duration-300 hover:shadow-md;
+}
+
+/* Card terracota — destacado / featured */
+@utility card-featured {
+  @apply bg-primary-500 rounded-xl overflow-hidden
+         border border-primary-600 text-white shadow-lg;
+}
+
+/* Card oscura — sobre fondo obsidiana */
+@utility card-dark {
+  @apply bg-primary-950 rounded-xl overflow-hidden
+         border border-primary-800 text-white shadow-lg;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BADGES Y TAGS
+   ───────────────────────────────────────────────────────────── */
+
+@utility badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+@utility badge-primary {
+  @apply badge bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200;
+}
+
+@utility badge-accent {
+  @apply badge bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300;
+}
+
+@utility badge-gold {
+  @apply badge bg-gold-100 text-gold-800 dark:bg-gold-900 dark:text-gold-200;
+}
+
+@utility badge-neutral {
+  @apply badge bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LÍNEA DE MARCA (gradiente terracota → naranja → oro)
+   ───────────────────────────────────────────────────────────── */
+
+@utility brand-line {
+  @apply h-1 w-full rounded-full;
+  background: linear-gradient(90deg, #B5451B, #E07B39, #D4A017);
+}
+
+@utility brand-line-sm {
+  @apply h-0.5 w-full rounded-full;
+  background: linear-gradient(90deg, #B5451B, #E07B39, #D4A017);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SECCIONES DE FONDO
+   ───────────────────────────────────────────────────────────── */
+
+/* Sección clara — arena */
+@utility section-warm {
+  @apply bg-secondary-100 dark:bg-secondary-900;
+}
+
+/* Sección oscura — obsidiana */
+@utility section-dark {
+  @apply bg-primary-950 dark:bg-primary-950 text-white;
+}
+
+/* Sección terracota — hero o CTA final */
+@utility section-brand {
+  @apply bg-primary-500 text-white;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TIPOGRAFÍA BASE
+   ───────────────────────────────────────────────────────────── */
+
+@layer base {
+  /* Importar fuentes de Google */
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=DM+Mono:wght@400&display=swap');
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-medium tracking-tight;
+  }
+
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
+  h2 { @apply text-3xl md:text-4xl; }
+  h3 { @apply text-2xl md:text-3xl; }
+  h4 { @apply text-xl md:text-2xl; }
+
+  p {
+    @apply text-base md:text-lg leading-relaxed;
+  }
+
+  /* Links — terracota */
+  a {
+    @apply text-primary-500 hover:text-primary-600 transition-colors duration-200;
+  }
+
+  /* Código inline */
+  code {
+    @apply font-mono text-sm bg-secondary-100 dark:bg-secondary-800
+           text-primary-700 dark:text-primary-300
+           px-1.5 py-0.5 rounded;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TEXTO DE MARCA
+   ───────────────────────────────────────────────────────────── */
+
+/* Nombre de la empresa con acento */
+@utility brand-wordmark {
+  @apply font-display font-medium tracking-tight;
+  letter-spacing: -0.03em;
+}
+
+/* Texto de acento — terracota */
+@utility text-brand {
+  @apply text-primary-500 dark:text-primary-400;
+}
+
+/* Texto de acento — naranja */
+@utility text-accent {
+  @apply text-accent-400 dark:text-accent-300;
+}
+
+/* Texto de acento — oro */
+@utility text-gold {
+  @apply text-gold-600 dark:text-gold-400;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMACIONES (helpers)
+   ───────────────────────────────────────────────────────────── */
+
+.fade-in   { @apply animate-fade-in; }
+.slide-up  { @apply animate-slide-up; }
+.slide-down { @apply animate-slide-down; }
+
+/* ─────────────────────────────────────────────────────────────
+   ACCESIBILIDAD
+   ───────────────────────────────────────────────────────────── */
+
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+:focus-visible {
+  @apply outline-hidden ring-2 ring-primary-500 dark:ring-primary-400;
+}

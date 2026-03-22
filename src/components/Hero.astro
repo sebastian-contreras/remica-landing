@@ -1,0 +1,194 @@
+---
+---
+<section class="relative pt-32 pb-0 md:pt-40 overflow-hidden bg-white dark:bg-primary-950">
+
+  <!-- Fondo: patrón geométrico andino sutil -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <svg class="absolute right-0 top-0 w-1/2 h-full opacity-[0.03] dark:opacity-[0.06]"
+         viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0"   y="0"   width="80" height="160" fill="#B5451B"/>
+      <rect x="80"  y="80"  width="80" height="160" fill="#B5451B"/>
+      <rect x="160" y="0"   width="80" height="160" fill="#B5451B"/>
+      <rect x="240" y="80"  width="80" height="160" fill="#B5451B"/>
+      <rect x="320" y="0"   width="80" height="160" fill="#B5451B"/>
+      <rect x="400" y="80"  width="80" height="160" fill="#B5451B"/>
+      <rect x="480" y="0"   width="80" height="160" fill="#B5451B"/>
+      <rect x="0"   y="320" width="80" height="160" fill="#B5451B"/>
+      <rect x="80"  y="400" width="80" height="160" fill="#B5451B"/>
+      <rect x="160" y="320" width="80" height="160" fill="#B5451B"/>
+      <rect x="240" y="400" width="80" height="160" fill="#B5451B"/>
+      <rect x="320" y="320" width="80" height="160" fill="#B5451B"/>
+      <rect x="400" y="400" width="80" height="160" fill="#B5451B"/>
+      <rect x="480" y="320" width="80" height="160" fill="#B5451B"/>
+      <rect x="0"   y="640" width="80" height="160" fill="#B5451B"/>
+      <rect x="80"  y="720" width="80" height="160" fill="#B5451B"/>
+      <rect x="160" y="640" width="80" height="160" fill="#B5451B"/>
+      <rect x="240" y="720" width="80" height="160" fill="#B5451B"/>
+      <rect x="320" y="640" width="80" height="160" fill="#B5451B"/>
+      <rect x="400" y="720" width="80" height="160" fill="#B5451B"/>
+      <rect x="480" y="640" width="80" height="160" fill="#B5451B"/>
+    </svg>
+  </div>
+
+  <div class="container-custom relative z-10">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+
+      <!-- Copy -->
+      <div class="slide-up">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+                    bg-primary-50 dark:bg-primary-950
+                    border border-primary-200 dark:border-primary-800
+                    text-primary-600 dark:text-primary-400
+                    text-sm font-medium mb-6">
+          <span class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+          Tucumán · NOA · Argentina
+        </div>
+
+        <h1 class="mb-6 text-secondary-900 dark:text-white leading-[1.08] tracking-tight">
+          Software que<br>
+          <span class="text-primary-500 dark:text-primary-400">no se cae.</span>
+        </h1>
+
+        <p class="text-lg text-secondary-600 dark:text-secondary-300 mb-8 max-w-lg leading-relaxed">
+          Desarrollamos sistemas a medida, automatizaciones con n8n y chatbots
+          para empresas y organismos que necesitan tecnología precisa desde el primer día.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-4 mb-10">
+          <a href="#contacto" class="btn-primary">
+            Hablemos de tu proyecto
+          </a>
+          <a href="#servicios" class="btn-ghost">
+            Ver servicios
+          </a>
+        </div>
+
+        <!-- Stack badges -->
+        <div class="flex flex-wrap gap-2">
+          {['Laravel', 'React', 'n8n', 'PostgreSQL', 'WhatsApp API', 'Chatbots'].map(tech => (
+            <span class="badge-neutral font-mono text-xs">{tech}</span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Símbolo animado Rumica -->
+      <div class="relative fade-in flex items-center justify-center">
+        <div class="relative w-full max-w-md mx-auto">
+
+          <!-- Glow de fondo -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-72 h-72 rounded-full bg-primary-100 dark:bg-primary-950 opacity-60"
+                 style="filter: blur(60px);"></div>
+          </div>
+
+          <!-- SVG principal -->
+          <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg"
+               class="w-full h-auto relative z-10">
+
+            <!-- Anillo externo giratorio -->
+            <circle cx="250" cy="210" r="190" fill="none"
+                    stroke="#B5451B" stroke-width="1" stroke-dasharray="12 8" opacity="0.2">
+              <animateTransform attributeName="transform" type="rotate"
+                from="0 250 210" to="360 250 210" dur="40s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="250" cy="210" r="170" fill="none"
+                    stroke="#E07B39" stroke-width="0.5" stroke-dasharray="6 12" opacity="0.15">
+              <animateTransform attributeName="transform" type="rotate"
+                from="360 250 210" to="0 250 210" dur="28s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Sombra del símbolo -->
+            <g transform="translate(252,212)" opacity="0.08">
+              <rect x="-118" y="-86" width="236" height="72" rx="14" fill="#2C1810"/>
+              <rect x="-118" y="2"   width="138" height="84" rx="14" fill="#2C1810"/>
+              <rect x="30"   y="18"  width="88"  height="68" rx="14" fill="#2C1810"/>
+            </g>
+
+            <!-- BLOQUE A (oro) — superior / puente -->
+            <rect x="132" y="124" width="236" height="72" rx="14" fill="#D4A017">
+              <animate attributeName="y" values="124;120;124" dur="5s" repeatCount="indefinite"/>
+            </rect>
+
+            <!-- BLOQUE B (terracota) — inferior izquierdo -->
+            <rect x="132" y="212" width="138" height="84" rx="14" fill="#B5451B">
+              <animate attributeName="y" values="212;216;212" dur="5s" repeatCount="indefinite"/>
+            </rect>
+
+            <!-- BLOQUE C (naranja) — inferior derecho -->
+            <rect x="280" y="228" width="88" height="68" rx="14" fill="#E07B39">
+              <animate attributeName="y" values="228;232;228" dur="5s" repeatCount="indefinite"/>
+            </rect>
+
+            <!-- Partículas flotantes -->
+            <circle cx="108" cy="140" r="5" fill="#D4A017" opacity="0.6">
+              <animate attributeName="cy" values="140;126;140" dur="4s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.6;0.2;0.6" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="390" cy="170" r="4" fill="#B5451B" opacity="0.5">
+              <animate attributeName="cy" values="170;158;170" dur="5.5s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0.15;0.5" dur="5.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="420" cy="280" r="6" fill="#E07B39" opacity="0.4">
+              <animate attributeName="cy" values="280;266;280" dur="6s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.4;0.1;0.4" dur="6s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="80"  cy="300" r="4" fill="#D4A017" opacity="0.5">
+              <animate attributeName="cy" values="300;288;300" dur="4.5s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0.15;0.5" dur="4.5s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Wordmark debajo del símbolo -->
+            <text x="250" y="356" font-family="Outfit, Inter, system-ui, sans-serif"
+                  font-weight="500" font-size="42" letter-spacing="-2"
+                  text-anchor="middle" fill="#2C1810" class="dark:fill-white" opacity="0.9">
+              Rumica
+            </text>
+            <text x="250" y="385" font-family="Outfit, Inter, system-ui, sans-serif"
+                  font-weight="400" font-size="13" letter-spacing="2.5"
+                  text-anchor="middle" fill="#8B7B6B" text-transform="uppercase">
+              CONSTRUIDO SOBRE ROCA
+            </text>
+
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banda inferior — obsidiana con métricas -->
+  <div class="mt-16 w-full">
+    <div class="brand-line"></div>
+    <div class="bg-primary-950 py-10 md:py-14">
+      <div class="container-custom">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { num: '3+', label: 'Años de experiencia' },
+            { num: '10+', label: 'Sistemas entregados' },
+            { num: '5', label: 'Industrias distintas' },
+            { num: '100%', label: 'Proyectos en producción' },
+          ].map(stat => (
+            <div>
+              <div class="text-3xl md:text-4xl font-display font-medium text-gold-400 mb-1">
+                {stat.num}
+              </div>
+              <div class="text-sm text-secondary-400 uppercase tracking-wider">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .fade-in svg {
+    animation: float 7s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0px); }
+    50%      { transform: translateY(-12px); }
+  }
+</style>

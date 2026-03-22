@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Features from "../components/Features.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Newsletter from "../components/Newsletter.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Inicio - Rumica">
+  <Header />
+  <main>
+    <div id="Inicio">
+      <Hero />
+    </div>
+    <div id="Servicios">
+      <Features />
+    </div>
+
+    <Testimonials />
+    <Newsletter />
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,129 @@
+---
+const services = [
+  {
+    title: "Desarrollo a medida",
+    description: "Construimos sistemas financieros, comerciales y operativos diseñados exactamente para tu proceso de negocio — sin software enlatado que no termina de encajar.",
+    icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
+    color: "primary",
+    tag: "Laravel · React · PostgreSQL"
+  },
+  {
+    title: "Automatizaciones con n8n",
+    description: "Convertimos procesos manuales repetitivos en flujos automáticos. Integraciones entre sistemas, notificaciones, reportes y pipelines de datos sin código adicional.",
+    icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
+    color: "accent",
+    tag: "n8n · APIs · Webhooks"
+  },
+  {
+    title: "Chatbots e IA",
+    description: "Asistentes conversacionales integrados a WhatsApp Business, sitio web o sistema interno. Atención al cliente, gestión de turnos y comunicación masiva automatizada.",
+    icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
+    color: "gold",
+    tag: "WhatsApp API · Meta · Flowise"
+  },
+  {
+    title: "Comunicación masiva",
+    description: "Campañas de mensajería a través de WhatsApp, SMS y llamadas telefónicas. Gestión de moras, cobranzas y comunicaciones comerciales a escala con trazabilidad completa.",
+    icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+    color: "primary",
+    tag: "Meta · SMS · Twilio"
+  },
+  {
+    title: "Consultoría tecnológica",
+    description: "Auditorías de sistemas, arquitectura de bases de datos, selección de stack y planificación de proyectos. Te ayudamos a tomar las decisiones técnicas correctas antes de invertir.",
+    icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
+    color: "accent",
+    tag: "Auditoría · Arquitectura · Planning"
+  },
+  {
+    title: "Implementación de software",
+    description: "Instalación, configuración y puesta en marcha de sistemas de terceros. Migraciones de datos, capacitación del equipo y soporte post-implementación.",
+    icon: "M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01",
+    color: "primary",
+    tag: "On-premise · Cloud · Híbrido"
+  }
+];
+
+const colorMap: Record<string, { bg: string; icon: string; tag: string }> = {
+  primary: {
+    bg:   'bg-primary-50 dark:bg-primary-950/50',
+    icon: 'text-primary-500 dark:text-primary-400',
+    tag:  'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300',
+  },
+  accent: {
+    bg:   'bg-accent-50 dark:bg-accent-950/30',
+    icon: 'text-accent-500 dark:text-accent-400',
+    tag:  'bg-accent-100 dark:bg-accent-900/40 text-accent-700 dark:text-accent-300',
+  },
+  gold: {
+    bg:   'bg-gold-50 dark:bg-gold-950/30',
+    icon: 'text-gold-600 dark:text-gold-400',
+    tag:  'bg-gold-100 dark:bg-gold-900/40 text-gold-700 dark:text-gold-300',
+  },
+};
+---
+
+<section id="servicios" class="section bg-white dark:bg-primary-950">
+  <div class="container-custom">
+
+    <!-- Encabezado -->
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <span class="badge-primary mb-4">Servicios</span>
+      <h2 class="mb-5 text-secondary-900 dark:text-white">
+        Todo lo que tu empresa necesita<br class="hidden md:block">
+        <span class="text-primary-500">para digitalizarse de verdad.</span>
+      </h2>
+      <p class="text-secondary-600 dark:text-secondary-400">
+        No vendemos paquetes genéricos. Cada proyecto empieza con entender tu proceso
+        y termina con un sistema que funciona desde el primer día.
+      </p>
+    </div>
+
+    <!-- Grid de servicios -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {services.map((service, index) => {
+        const c = colorMap[service.color] ?? colorMap.primary;
+        return (
+          <div
+            class="card p-6 slide-up group hover:border-primary-200 dark:hover:border-primary-800"
+            style={`animation-delay: ${index * 80}ms`}
+          >
+            <!-- Ícono -->
+            <div class={`w-11 h-11 rounded-lg ${c.bg} flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110`}>
+              <svg class={`w-5 h-5 ${c.icon}`} fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d={service.icon}/>
+              </svg>
+            </div>
+
+            <h3 class="text-lg font-medium mb-2 text-secondary-900 dark:text-white">
+              {service.title}
+            </h3>
+            <p class="text-secondary-600 dark:text-secondary-400 text-sm leading-relaxed mb-4">
+              {service.description}
+            </p>
+
+            <!-- Stack tag -->
+            <span class={`inline-block text-xs font-mono px-2.5 py-1 rounded-md ${c.tag}`}>
+              {service.tag}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- CTA inferior -->
+    <div class="mt-14 text-center">
+      <p class="text-secondary-500 dark:text-secondary-400 mb-4 text-sm">
+        ¿No encontrás lo que necesitás? Hablemos igual.
+      </p>
+      <a href="#contacto" class="btn-primary">
+        Contanos tu proyecto
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>
