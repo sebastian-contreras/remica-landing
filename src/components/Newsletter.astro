@@ -160,10 +160,12 @@ const socials = [
       <!-- ─── Formulario ─────────────────────────────────────── -->
       <div class="md:col-span-3">
         <div class="card p-8 border border-secondary-200 dark:border-secondary-800"
-             x-data="{
-               name: '', email: '', company: '', service: '', message: '',
-               submitted: false, loading: false
-             }">
+        x-data="{
+          name: '', email: '', company: '', service: '', message: '',
+          submitted: false, loading: false
+        }">
+        
+  <form @submit.prevent>
 
           <div x-show="!submitted">
             <div class="grid sm:grid-cols-2 gap-5 mb-5">
@@ -174,7 +176,7 @@ const socials = [
                                          text-secondary-700 dark:text-secondary-300 mb-1.5">
                   Nombre y apellido <span class="text-primary-500">*</span>
                 </label>
-                <input type="text" id="name" x-model="name"
+                <input name="nombre" type="text" id="name" x-model="name"
                   placeholder="Juan García"
                   class="w-full px-4 py-2.5 rounded-lg text-sm
                          border border-secondary-200 dark:border-secondary-700
@@ -191,7 +193,7 @@ const socials = [
                                           text-secondary-700 dark:text-secondary-300 mb-1.5">
                   Email <span class="text-primary-500">*</span>
                 </label>
-                <input type="email" id="email" x-model="email"
+                <input  type="email" name="email" id="email" x-model="email"
                   placeholder="juan@empresa.com"
                   class="w-full px-4 py-2.5 rounded-lg text-sm
                          border border-secondary-200 dark:border-secondary-700
@@ -210,7 +212,7 @@ const socials = [
                                           text-secondary-700 dark:text-secondary-300 mb-1.5">
                 Empresa u organismo
               </label>
-              <input type="text" id="company" x-model="company"
+              <input name="empresa" type="text" id="company" x-model="company"
                 placeholder="Mi Empresa S.A. / Municipalidad de..."
                 class="w-full px-4 py-2.5 rounded-lg text-sm
                        border border-secondary-200 dark:border-secondary-700
@@ -228,7 +230,7 @@ const socials = [
                 ¿Qué necesitás? <span class="text-primary-500">*</span>
               </label>
               <div class="relative">
-                <select id="service" x-model="service"
+                <select name="servicio" id="service" x-model="service"
                   class="w-full px-4 py-2.5 rounded-lg text-sm appearance-none
                          border border-secondary-200 dark:border-secondary-700
                          bg-white dark:bg-secondary-900
@@ -253,7 +255,7 @@ const socials = [
                                           text-secondary-700 dark:text-secondary-300 mb-1.5">
                 Contanos tu proyecto <span class="text-primary-500">*</span>
               </label>
-              <textarea id="message" x-model="message" rows="4"
+              <textarea name="descripcion" id="message" x-model="message" rows="4"
                 placeholder="Describí brevemente qué proceso querés automatizar o digitalizar, qué problema tenés hoy y cuántos usuarios usarían el sistema..."
                 class="w-full px-4 py-2.5 rounded-lg text-sm resize-none
                        border border-secondary-200 dark:border-secondary-700
@@ -265,14 +267,32 @@ const socials = [
             </div>
 
             <!-- Submit -->
-            <button type="button"
-              class="w-full btn-primary justify-center py-3.5 gap-2"
-              x-on:click="
-                if (!name || !email || !service || !message) return;
-                loading = true;
-                setTimeout(() => { loading = false; submitted = true; }, 900);
-              "
-              :disabled="loading">
+<button
+  type="button"
+  class="w-full btn-primary justify-center py-3.5 gap-2"
+  :disabled="loading"
+  x-on:click="
+    if (!name || !email || !service || !message) return;
+    loading = true;
+    const form = $el.closest('form');
+    fetch('https://formspree.io/f/xykbkywr', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    })
+    .then(r => {
+      if (r.ok) {
+        submitted = true;
+        form.reset();
+      } else {
+        alert('Hubo un error al enviar. Intentá de nuevo.');
+      }
+    })
+    .catch(() => alert('Error de red. Verificá tu conexión.'))
+    .finally(() => loading = false)
+  "
+>
+
               <span x-show="!loading" class="flex items-center gap-2">
                 Enviar mensaje
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,6 +342,7 @@ const socials = [
               No enviamos spam.
             </p>
           </div>
+      </form>
 
           <!-- ─── Confirmación ─────────────────────────── -->
           <div class="text-center py-10" x-show="submitted" x-cloak>
@@ -361,6 +382,7 @@ const socials = [
 
         </div>
       </div>
+
     </div>
   </div>
 </section>
