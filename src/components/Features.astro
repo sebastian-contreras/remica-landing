@@ -63,43 +63,43 @@ const colorMap: Record<string, { bg: string; icon: string; tag: string }> = {
 };
 ---
 
-<section id="servicios" class="section bg-white dark:bg-primary-950">
+<section id="servicios" class="section bg-secondary-50 dark:bg-secondary-900">
   <div class="container-custom">
 
     <!-- Encabezado -->
-    <div class="text-center max-w-2xl mx-auto mb-16">
+    <div class="text-center max-w-2xl mx-auto mb-12 md:mb-16">
       <span class="badge-primary mb-4">Servicios</span>
-      <h2 class="mb-5 text-secondary-900 dark:text-white">
+      <h2 class="mb-4 heading">
         Todo lo que tu empresa necesita<br class="hidden md:block">
-        <span class="text-primary-500">para digitalizarse de verdad.</span>
+        <span class="text-primary-500 dark:text-primary-400">para digitalizarse de verdad.</span>
       </h2>
-      <p class="text-secondary-600 dark:text-secondary-400">
+      <p class="subtext prose-readable mx-auto">
         No vendemos paquetes genéricos. Cada proyecto empieza con entender tu proceso
         y termina con un sistema que funciona desde el primer día.
       </p>
     </div>
 
     <!-- Grid de servicios -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
       {services.map((service, index) => {
         const c = colorMap[service.color] ?? colorMap.primary;
         return (
           <div
-            class="card p-6 slide-up group hover:border-primary-200 dark:hover:border-primary-800"
-            style={`animation-delay: ${index * 80}ms`}
+            class="card group reveal"
+            style={`transition-delay: ${index * 60}ms`}
           >
             <!-- Ícono -->
-            <div class={`w-11 h-11 rounded-lg ${c.bg} flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110`}>
+            <div class={`w-11 h-11 rounded-lg ${c.bg} flex items-center justify-center mb-5 transition-transform duration-200 ease-out group-hover:scale-105`}>
               <svg class={`w-5 h-5 ${c.icon}`} fill="none" stroke="currentColor"
                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d={service.icon}/>
               </svg>
             </div>
 
-            <h3 class="text-lg font-medium mb-2 text-secondary-900 dark:text-white">
+            <h3 class="text-[1.125rem] font-semibold mb-2 heading">
               {service.title}
             </h3>
-            <p class="text-secondary-700 dark:text-secondary-400 text-base leading-relaxed mb-4">
+            <p class="text-secondary-600 dark:text-secondary-400 text-[0.9375rem] leading-relaxed mb-4">
               {service.description}
             </p>
 
@@ -113,17 +113,18 @@ const colorMap: Record<string, { bg: string; icon: string; tag: string }> = {
     </div>
 
     <!-- CTA inferior -->
-    <div class="mt-14 text-center">
-      <p class="text-secondary-500 dark:text-secondary-400 mb-4 text-sm">
-        ¿No encontrás lo que necesitás? Hablemos igual.
-      </p>
-      <a href="#contacto" class="btn-primary">
-        Contanos tu proyecto
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-        </svg>
-      </a>
-    </div>
+<div class="mt-12 md:mt-14 flex flex-col items-center">
+  <p class="text-secondary-500 dark:text-secondary-400 mb-4 text-sm text-center">
+    ¿No encontrás lo que necesitás? Hablemos igual.
+  </p>
+
+  <a href="#contacto" class="btn-primary flex items-center justify-center">
+    Contanos tu proyecto
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+    </svg>
+  </a>
+</div>
 
   </div>
 </section>

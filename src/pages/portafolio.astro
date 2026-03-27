@@ -295,7 +295,7 @@ const colorMap: Record<
   <main>
     <!-- ─── HERO ──────────────────────────────────────────────── -->
     <section
-      class="relative pt-32 pb-20 md:pt-40 overflow-hidden bg-primary-950"
+      class="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-24 overflow-hidden bg-primary-950"
     >
       <div class="brand-line absolute top-0 inset-x-0"></div>
       <div
@@ -324,17 +324,17 @@ const colorMap: Record<
       </div>
       <div class="container-custom relative z-10">
         <div class="max-w-3xl">
-          <span class="badge-primary mb-5 inline-block">Portafolio</span>
-          <h1 class="text-white mb-5">
+          <span class="badge-primary mb-4">Portafolio</span>
+          <h1 class="text-white mb-4">
             Sistemas reales,<br />
             <span class="text-primary-400">en producción hoy.</span>
           </h1>
-          <p class="text-secondary-400 text-lg leading-relaxed max-w-2xl">
+          <p class="text-secondary-400 text-base md:text-lg leading-relaxed max-w-2xl mb-8">
             Ocho sistemas desarrollados a medida para financieras, prepagas,
             empresas comerciales y entidades del NOA. Nada de demos — todo
             funcionando en producción.
           </p>
-          <div class="flex flex-wrap gap-6 mt-10">
+          <div class="flex flex-wrap gap-8 md:gap-10">
             {
               [
                 { n: "8", l: "Sistemas completos" },
@@ -343,10 +343,10 @@ const colorMap: Record<
                 { n: "100%", l: "Código propio" },
               ].map((s) => (
                 <div>
-                  <div class="text-2xl font-display font-medium text-gold-400">
+                  <div class="text-2xl md:text-3xl font-display font-semibold text-gold-400 mb-1">
                     {s.n}
                   </div>
-                  <div class="text-xs text-secondary-500 uppercase tracking-wider mt-0.5">
+                  <div class="text-xs text-secondary-500 uppercase tracking-wider">
                     {s.l}
                   </div>
                 </div>
@@ -358,44 +358,54 @@ const colorMap: Record<
     </section>
 
     <!-- ─── PROYECTOS ─────────────────────────────────────────── -->
-    <section class="py-20 bg-white dark:bg-primary-950">
-      <div class="container-custom space-y-16">
+    <section class="section pb-16 md:pb-24">
+      <div class="container-custom">
         {
           projects.map((proj, idx) => {
             const c = colorMap[proj.tag] ?? colorMap.primary;
             const isEven = idx % 2 === 0;
             const hasImage = Boolean((proj as any).image);
+            
+            // Alternating background styles to avoid monotony
+            const bgStyles = [
+              'bg-white dark:bg-secondary-900',
+              'bg-secondary-50/80 dark:bg-secondary-800/40',
+              'bg-secondary-100/60 dark:bg-secondary-800/30',
+              'bg-primary-50/30 dark:bg-primary-950/30',
+            ];
+            const currentBg = bgStyles[idx % bgStyles.length];
 
             return (
               <article
                 id={proj.id}
-                class={`rounded-2xl border overflow-hidden transition-all duration-300 ${c.border}
-                      bg-white dark:bg-secondary-900`}
+                class={`reveal mb-10 md:mb-14 last:mb-0 rounded-[12px] border overflow-hidden transition-all duration-300 ${c.border} ${currentBg}
+                        hover:shadow-lg`}
+                style={`transition-delay: ${idx * 60}ms`}
               >
                 {/* Barra de color */}
-                <div class={`h-1.5 w-full ${c.bar}`} />
+                <div class={`h-1 w-full ${c.bar}`} />
 
                 <div class="grid md:grid-cols-5 gap-0">
                   {/* ── Columna texto (3/5) ──────────────────────── */}
                   <div
-                    class={`md:col-span-3 p-8 md:p-10 ${isEven ? "" : "md:order-2"}`}
+                    class={`md:col-span-3 p-6 md:p-8 lg:p-10 ${isEven ? "" : "md:order-2"}`}
                   >
                     <div class="flex items-center gap-3 mb-4">
                       <span class={`badge text-xs ${c.badge}`}>
                         {proj.category}
                       </span>
-                      <span class="text-xs font-mono text-secondary-400">
+                      <span class="text-xs font-mono text-secondary-400 dark:text-secondary-500">
                         #{String(idx + 1).padStart(2, "0")}
                       </span>
                     </div>
 
-                    <h2 class="text-secondary-900 dark:text-white mb-2 text-2xl md:text-3xl font-medium">
+                    <h2 class="heading mb-2 text-secondary-900 dark:text-white">
                       {proj.title}
                     </h2>
-                    <p class={`text-base font-medium mb-4 ${c.icon}`}>
+                    <p class={`text-base font-medium mb-3 ${c.icon}`}>
                       {proj.headline}
                     </p>
-                    <p class="text-secondary-600 dark:text-secondary-400 text-sm leading-relaxed mb-6">
+                    <p class="text-secondary-600 dark:text-secondary-400 text-[0.9375rem] leading-relaxed mb-6">
                       {proj.description}
                     </p>
 
@@ -415,7 +425,7 @@ const colorMap: Record<
                               d="M5 13l4 4L19 7"
                             />
                           </svg>
-                          {f}
+                          <span>{f}</span>
                         </li>
                       ))}
                     </ul>
@@ -437,11 +447,11 @@ const colorMap: Record<
                              ${isEven ? "md:order-2" : "md:order-1"}
                              border-t md:border-t-0
                              ${isEven ? "md:border-l" : "md:border-r"}
-                             border-secondary-100 dark:border-primary-900`}
+                             border-secondary-200 dark:border-secondary-700/50`}
                   >
                     {hasImage ? (
                       /* ── Con imagen ──────────────────────────────── */
-                      <div class="relative h-full min-h-[260px] md:min-h-0">
+                      <div class="relative h-full min-h-[240px] md:min-h-[320px]">
                         {/* Imagen de fondo */}
                         <img
                           src={(proj as any).image}
@@ -457,14 +467,14 @@ const colorMap: Record<
                         />
 
                         {/* Contenido sobre la imagen */}
-                        <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
                           {/* Símbolo Rumica pequeño */}
                           <svg
-                            width="32"
-                            height="32"
+                            width="28"
+                            height="28"
                             viewBox="0 0 60 60"
                             xmlns="http://www.w3.org/2000/svg"
-                            class="mb-3 opacity-80"
+                            class="mb-2 opacity-70"
                           >
                             <rect
                               x="4"
@@ -493,12 +503,12 @@ const colorMap: Record<
                             />
                           </svg>
 
-                          <p class="text-xs font-mono text-white/70 mb-2">
+                          <p class="text-xs font-mono text-white/60 mb-2">
                             sistema en producción
                           </p>
 
                           <div
-                            class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                            class={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full
                                      text-xs font-medium backdrop-blur-sm
                                      bg-white/15 text-white border border-white/20`}
                           >
@@ -522,22 +532,26 @@ const colorMap: Record<
                     ) : (
                       /* ── Sin imagen → ícono centrado ─────────────── */
                       <div
-                        class={`h-full min-h-[220px] flex items-center justify-center p-8 md:p-10
-                                 bg-secondary-50 dark:bg-primary-950/60`}
+                        class={`h-full min-h-[240px] md:min-h-[320px] flex items-center justify-center p-6 md:p-8
+                                 ${proj.tag === 'primary' 
+                                   ? 'bg-secondary-100/60 dark:bg-primary-950/40' 
+                                   : proj.tag === 'accent'
+                                   ? 'bg-accent-50/40 dark:bg-accent-950/20'
+                                   : 'bg-gold-50/40 dark:bg-gold-950/20'}`}
                       >
                         <div class="text-center">
                           <div
-                            class={`w-24 h-24 rounded-2xl mx-auto mb-5 flex items-center justify-center
+                            class={`w-20 h-20 rounded-xl mx-auto mb-4 flex items-center justify-center
                                      ${
                                        proj.tag === "primary"
-                                         ? "bg-primary-50 dark:bg-primary-900/40"
+                                         ? "bg-primary-100/60 dark:bg-primary-900/30"
                                          : proj.tag === "accent"
-                                           ? "bg-accent-50 dark:bg-accent-900/20"
-                                           : "bg-gold-50 dark:bg-gold-900/20"
+                                           ? "bg-accent-100/50 dark:bg-accent-900/20"
+                                           : "bg-gold-100/50 dark:bg-gold-900/20"
                                      }`}
                           >
                             <svg
-                              class={`w-12 h-12 ${c.icon}`}
+                              class={`w-10 h-10 ${c.icon}`}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -552,11 +566,11 @@ const colorMap: Record<
                           </div>
 
                           <svg
-                            width="36"
-                            height="36"
+                            width="32"
+                            height="32"
                             viewBox="0 0 60 60"
                             xmlns="http://www.w3.org/2000/svg"
-                            class="mx-auto mb-3 opacity-35"
+                            class="mx-auto mb-2 opacity-25"
                           >
                             <rect
                               x="4"
@@ -590,12 +604,12 @@ const colorMap: Record<
                             />
                           </svg>
 
-                          <p class="text-xs text-secondary-400 dark:text-secondary-600 font-mono mb-3">
+                          <p class="text-xs text-secondary-400 dark:text-secondary-500 font-mono mb-3">
                             sistema en producción
                           </p>
 
                           <div
-                            class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                            class={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full
                                      text-xs font-medium ${c.badge}`}
                           >
                             <svg
@@ -626,12 +640,12 @@ const colorMap: Record<
     </section>
 
     <!-- ─── CTA FINAL ─────────────────────────────────────────── -->
-    <section class="section section-warm dark:bg-secondary-900">
+    <section class="section bg-white dark:bg-primary-950">
       <div class="container-custom max-w-3xl text-center">
-        <div class="flex justify-center mb-6">
+        <div class="flex justify-center mb-5">
           <svg
-            width="52"
-            height="52"
+            width="48"
+            height="48"
             viewBox="0 0 60 60"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -643,17 +657,15 @@ const colorMap: Record<
             ></rect>
           </svg>
         </div>
-        <h2 class="text-secondary-900 dark:text-white mb-5">
+        <h2 class="heading mb-4">
           ¿Tenés un problema parecido<br />
-          <span class="text-primary-500">a alguno de estos proyectos?</span>
+          <span class="text-primary-500 dark:text-primary-400">a alguno de estos proyectos?</span>
         </h2>
-        <p
-          class="text-secondary-600 dark:text-secondary-400 mb-8 leading-relaxed"
-        >
+        <p class="subtext prose-readable mx-auto mb-8">
           Contanos el desafío de tu empresa. En menos de 48 horas te respondemos
           con una evaluación inicial gratuita — sin compromiso.
         </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <div class="flex flex-col sm:flex-row justify-center gap-3">
           <a href="/#contacto" class="btn-primary">Hablar con el equipo →</a>
           <a href="/company" class="btn-ghost">Conocer Rumica</a>
         </div>

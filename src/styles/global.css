@@ -61,20 +61,20 @@
   --font-mono:    'DM Mono', 'Courier New', monospace;
 
   /* ─── ANIMACIONES ────────────────────────────────────────── */
-  --animate-fade-in:   fadeIn   0.5s ease-in-out;
-  --animate-slide-up:  slideUp  0.5s ease-in-out;
-  --animate-slide-down: slideDown 0.5s ease-in-out;
+  --animate-fade-in:   fadeIn   0.4s ease-out;
+  --animate-slide-up:  slideUp  0.5s ease-out;
+  --animate-slide-down: slideDown 0.4s ease-out;
 
   @keyframes fadeIn {
     0%   { opacity: 0; }
     100% { opacity: 1; }
   }
   @keyframes slideUp {
-    0%   { transform: translateY(20px); opacity: 0; }
+    0%   { transform: translateY(24px); opacity: 0; }
     100% { transform: translateY(0);    opacity: 1; }
   }
   @keyframes slideDown {
-    0%   { transform: translateY(-20px); opacity: 0; }
+    0%   { transform: translateY(-16px); opacity: 0; }
     100% { transform: translateY(0);     opacity: 1; }
   }
 }
@@ -94,43 +94,45 @@
    BOTONES
    ───────────────────────────────────────────────────────────── */
 
-/* Base */
+/* Base — min-height: 44-48px, padding: 12px 24px, border-radius: 8px */
 @utility btn {
-  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-hidden;
+  @apply inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-lg font-medium text-base transition-all duration-200 ease-out focus:outline-hidden;
 }
 
 /* Terracota sólido — CTA principal */
 @utility btn-primary {
-  @apply btn bg-primary-500 hover:bg-primary-600 text-white shadow-md hover:shadow-lg;
+  @apply btn bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white shadow-sm hover:shadow-md;
 }
 
 /* Oscuro / obsidiana — CTA secundario */
 @utility btn-secondary {
-  @apply btn bg-primary-950 hover:bg-primary-900 text-white shadow-md hover:shadow-lg;
+  @apply btn bg-primary-950 hover:bg-primary-900 active:bg-primary-800 text-white shadow-sm hover:shadow-md;
 }
 
 /* Naranja NOA — acento / destacado */
 @utility btn-accent {
-  @apply btn bg-accent-400 hover:bg-accent-500 text-white shadow-md hover:shadow-lg;
+  @apply btn bg-accent-400 hover:bg-accent-500 active:bg-accent-600 text-white shadow-sm hover:shadow-md;
 }
 
 /* Oro andino — para premios, badges, CTAs especiales */
 @utility btn-gold {
-  @apply btn bg-gold-400 hover:bg-gold-500 text-primary-950 shadow-md hover:shadow-lg;
+  @apply btn bg-gold-400 hover:bg-gold-500 active:bg-gold-600 text-primary-950 shadow-sm hover:shadow-md;
 }
 
 /* Outline terracota — alternativo */
 @utility btn-outline {
   @apply btn border-2 border-primary-500 dark:border-primary-400
          hover:bg-primary-50 dark:hover:bg-primary-950
+         active:bg-primary-100 dark:active:bg-primary-900
          text-primary-600 dark:text-primary-300;
 }
 
 /* Ghost sobre fondo oscuro — nav links, etc */
 @utility btn-ghost {
-  @apply btn border border-secondary-200 dark:border-secondary-700
+  @apply btn border border-secondary-300 dark:border-secondary-600
          hover:bg-secondary-100 dark:hover:bg-secondary-800
-         text-secondary-800 dark:text-secondary-100;
+         active:bg-secondary-200 dark:active:bg-secondary-700
+         text-secondary-700 dark:text-secondary-200;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -138,11 +140,11 @@
    ───────────────────────────────────────────────────────────── */
 
 @utility container-custom {
-  @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  @apply mx-auto px-4 sm:px-8 lg:px-16 max-w-[1100px];
 }
 
 @utility section {
-  @apply py-16 md:py-24;
+  @apply py-16 md:py-24 lg:py-20;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -151,28 +153,32 @@
 
 /* Card base — blanco/oscuro */
 @utility card {
-  @apply bg-white dark:bg-secondary-900 rounded-xl shadow-md
-         hover:shadow-lg transition-shadow duration-300 overflow-hidden
-         border border-secondary-200 dark:border-secondary-800;
+  @apply bg-white dark:bg-secondary-900 rounded-[10px] shadow-sm
+         hover:shadow-md transition-all duration-200 ease-out overflow-hidden
+         border border-secondary-200 dark:border-secondary-800
+         p-6;
 }
 
 /* Card arena — secciones de fondo cálido */
 @utility card-warm {
-  @apply bg-secondary-100 dark:bg-secondary-900 rounded-xl
-         border border-secondary-200 dark:border-secondary-800
-         overflow-hidden transition-shadow duration-300 hover:shadow-md;
+  @apply bg-secondary-50 dark:bg-secondary-800/50 rounded-[10px]
+         border border-secondary-200 dark:border-secondary-700
+         overflow-hidden transition-all duration-200 ease-out hover:shadow-sm
+         p-6;
 }
 
 /* Card terracota — destacado / featured */
 @utility card-featured {
-  @apply bg-primary-500 rounded-xl overflow-hidden
-         border border-primary-600 text-white shadow-lg;
+  @apply bg-primary-500 rounded-[10px] overflow-hidden
+         border border-primary-600 text-white shadow-md
+         p-6;
 }
 
 /* Card oscura — sobre fondo obsidiana */
 @utility card-dark {
-  @apply bg-primary-950 rounded-xl overflow-hidden
-         border border-primary-800 text-white shadow-lg;
+  @apply bg-primary-950 rounded-[10px] overflow-hidden
+         border border-primary-800 text-white shadow-md
+         p-6;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -180,23 +186,23 @@
    ───────────────────────────────────────────────────────────── */
 
 @utility badge {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
 }
 
 @utility badge-primary {
-  @apply badge bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200;
+  @apply badge bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 border border-primary-200 dark:border-primary-800;
 }
 
 @utility badge-accent {
-  @apply badge bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300;
+  @apply badge bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 border border-accent-200 dark:border-accent-800;
 }
 
 @utility badge-gold {
-  @apply badge bg-gold-100 text-gold-800 dark:bg-gold-900 dark:text-gold-200;
+  @apply badge bg-gold-100 text-gold-800 dark:bg-gold-900/40 dark:text-gold-300 border border-gold-200 dark:border-gold-800;
 }
 
 @utility badge-neutral {
-  @apply badge bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300;
+  @apply badge bg-secondary-100 text-secondary-700 dark:bg-secondary-800/60 dark:text-secondary-300 border border-secondary-200 dark:border-secondary-700;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -217,14 +223,14 @@
    SECCIONES DE FONDO
    ───────────────────────────────────────────────────────────── */
 
-/* Sección clara — arena */
+/* Sección clara — para alternar con white */
 @utility section-warm {
-  @apply bg-secondary-100 dark:bg-secondary-900;
+  @apply bg-secondary-50 dark:bg-secondary-900;
 }
 
 /* Sección oscura — obsidiana */
 @utility section-dark {
-  @apply bg-primary-950 dark:bg-primary-950 text-white;
+  @apply bg-primary-950 text-white;
 }
 
 /* Sección terracota — hero o CTA final */
@@ -238,19 +244,25 @@
 
 @layer base {
   /* Importar fuentes de Google */
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=DM+Mono:wght@400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap');
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-medium tracking-tight;
+    @apply font-display font-semibold tracking-tight leading-tight;
   }
 
-  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
-  h2 { @apply text-3xl md:text-4xl; }
-  h3 { @apply text-2xl md:text-3xl; }
-  h4 { @apply text-xl md:text-2xl; }
+  /* H1: 40–48px */
+  h1 { @apply text-[2.5rem] md:text-[3rem] lg:text-[3.25rem] leading-[1.1]; }
+  /* H2: 32–36px */
+  h2 { @apply text-[2rem] md:text-[2.25rem] lg:text-[2.375rem] leading-[1.15]; }
+  /* H3: 24–28px */
+  h3 { @apply text-[1.5rem] md:text-[1.625rem] lg:text-[1.75rem] leading-[1.2]; }
+  /* H4: 20px */
+  h4 { @apply text-[1.25rem] leading-[1.3]; }
 
+  /* Body text: 16–18px with line-height 1.4–1.6 */
   p {
-    @apply text-base md:text-lg leading-relaxed;
+    @apply text-base md:text-[1.0625rem] leading-[1.55];
+    max-width: 65ch;
   }
 
   /* Links — terracota */
@@ -291,6 +303,21 @@
   @apply text-gold-600 dark:text-gold-400;
 }
 
+/* Section heading text */
+@utility heading {
+  @apply text-secondary-900 dark:text-white;
+}
+
+/* Section subtext */
+@utility subtext {
+  @apply text-secondary-600 dark:text-secondary-400;
+}
+
+/* Section divider */
+@utility section-divider {
+  @apply h-px bg-secondary-200 dark:bg-secondary-800;
+}
+
 /* ─────────────────────────────────────────────────────────────
    ANIMACIONES (helpers)
    ───────────────────────────────────────────────────────────── */
@@ -298,6 +325,22 @@
 .fade-in   { @apply animate-fade-in; }
 .slide-up  { @apply animate-slide-up; }
 .slide-down { @apply animate-slide-down; }
+
+/* Scroll reveal — elements animate when in view */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Max width for readable text */
+.prose-readable {
+  max-width: 65ch;
+}
 
 /* ─────────────────────────────────────────────────────────────
    ACCESIBILIDAD

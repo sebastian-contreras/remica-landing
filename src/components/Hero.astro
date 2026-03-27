@@ -1,6 +1,6 @@
 ---
 ---
-<section class="relative pt-32 pb-0 md:pt-40 overflow-hidden bg-white dark:bg-primary-950">
+<section class="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-24 overflow-hidden bg-white dark:bg-primary-950">
 
   <!-- Fondo: patrón geométrico andino sutil -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -31,13 +31,13 @@
   </div>
 
   <div class="container-custom relative z-10">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
 
       <!-- Copy -->
       <div class="slide-up">
         <!-- Badge -->
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
-                    bg-primary-50 dark:bg-primary-950
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full
+                    bg-primary-50 dark:bg-primary-950/80
                     border border-primary-200 dark:border-primary-800
                     text-primary-600 dark:text-primary-400
                     text-sm font-medium mb-6">
@@ -45,18 +45,18 @@
           Tucumán · NOA · Argentina
         </div>
 
-        <h1 class="mb-6 text-secondary-900 dark:text-white leading-[1.08] tracking-tight">
+        <h1 class="mb-5 text-secondary-900 dark:text-white">
           Software que<br>
           <span class="text-primary-500 dark:text-primary-400">no se cae.</span>
         </h1>
 
-        <p class="text-lg text-secondary-600 dark:text-secondary-300 mb-8 max-w-lg leading-relaxed">
+        <p class="text-base md:text-lg text-secondary-600 dark:text-secondary-300 mb-8 max-w-[28rem] leading-relaxed">
           Desarrollamos sistemas a medida, automatizaciones con n8n y chatbots
           para empresas y organismos que necesitan tecnología precisa desde el primer día.
         </p>
 
         <!-- CTAs -->
-        <div class="flex flex-wrap gap-4 mb-10">
+        <div class="flex flex-wrap gap-3 mb-8">
           <a href="#contacto" class="btn-primary">
             Hablemos de tu proyecto
           </a>
@@ -158,22 +158,22 @@
   </div>
 
   <!-- Banda inferior — obsidiana con métricas -->
-  <div class="mt-16 w-full">
+  <div class="mt-16 md:mt-20 w-full">
     <div class="brand-line"></div>
-    <div class="bg-primary-950 py-10 md:py-14">
+    <div class="bg-primary-950 py-12 md:py-16 dark:bg-secondary-950">
       <div class="container-custom">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
           {[
             { num: '3+', label: 'Años de experiencia' },
             { num: '10+', label: 'Sistemas entregados' },
             { num: '5', label: 'Industrias distintas' },
             { num: '100%', label: 'Proyectos en producción' },
           ].map(stat => (
-            <div>
-              <div class="text-3xl md:text-4xl font-display font-medium text-gold-400 mb-1">
+            <div class="reveal">
+              <div class="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-semibold text-gold-400 mb-2">
                 {stat.num}
               </div>
-              <div class="text-sm text-secondary-400 uppercase tracking-wider">{stat.label}</div>
+              <div class="text-xs md:text-sm text-secondary-400 uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
