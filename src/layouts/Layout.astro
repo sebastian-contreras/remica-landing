@@ -85,6 +85,17 @@ const schema = [
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <ClientRouter />
   </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EYXY6GS5F8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EYXY6GS5F8');
+</script>
+
   <body class="antialiased bg-white dark:bg-secondary-950 text-secondary-900 dark:text-secondary-100 transition-colors duration-300">
     <div id="page-wrapper" class="page-transition-wrapper">
       <slot />
