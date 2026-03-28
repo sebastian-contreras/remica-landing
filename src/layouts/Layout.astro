@@ -36,7 +36,7 @@ const {
 
 const resolvedCanonical = canonical ?? new URL(Astro.url.pathname, Astro.site).toString();
 const resolvedImage = new URL(image, Astro.site).toString();
-const metaTitle = title === DEFAULT_TITLE ? title : `${title} | ${SITE_NAME}`;
+const metaTitle = title === DEFAULT_TITLE ? title : `${SITE_NAME} | ${title}`;
 const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
 const schema = [
   ORGANIZATION_SCHEMA,
