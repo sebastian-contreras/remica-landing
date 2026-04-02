@@ -1,0 +1,1332 @@
+{
+  "name": "🔧 Demo · Chatbot WhatsApp — Centro Mecánico",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chatbot",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1b6faaf1-4eee-4b2e-8a0f-5555c0c4f566",
+      "name": "📩 Webhook · Recibir Mensaje WA",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1504,
+        -1408
+      ],
+      "webhookId": "chatbot-mecanico-noa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// GESTOR DE SESIONES — Usando $getWorkflowStaticData\n// Diferencia clave con ($getWorkflowStaticData('global')):\n//   $getWorkflowStaticData('global') persiste entre\n//   ejecuciones del MISMO workflow de forma global.\n//   Es la forma recomendada para n8n >= 0.226\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\n\n// ── Inicializar almacén de sesiones ───────────────────────\nif (!staticData.sessions) {\n  staticData.sessions = {};\n}\n\nconst body = $input.first().json.body;\n\n// ── Extraer campos del mensaje ────────────────────────────\nconst phone = String(\n  body.phone || body.from || body.sender ||\n  body.data?.from || ''\n).replace(/\\D/g, '');\n\nconst message = String(\n  body.message || body.text || body.body ||\n  body.data?.message || ''\n).trim();\n\nconst name = String(\n  body.name || body.pushName || body.contact ||\n  body.data?.name || 'Cliente'\n);\n\nif (!phone || !message) {\n  return [{ json: { skip: true, error: 'Sin teléfono o mensaje', raw: body } }];\n}\n\n// ── Timeout de sesión: 45 minutos ─────────────────────────\nconst TIMEOUT_MS = 45 * 60 * 1000;\nconst now = Date.now();\nlet session = staticData.sessions[phone];\n\nif (!session || (now - (session.lastActivity || 0)) > TIMEOUT_MS) {\n  session = {\n    step: 'start',\n    data: {},\n    lastActivity: now,\n    messageCount: 0\n  };\n}\n\nsession.lastActivity = now;\nsession.messageCount = (session.messageCount || 0) + 1;\n\n// ── Comandos globales ─────────────────────────────────────\nconst msgLower = message.toLowerCase().trim();\nconst resetWords = ['menu', 'inicio', 'hola', 'start', '0', 'volver', 'cancelar', 'salir', 'reiniciar', 'ayuda'];\n\nif (resetWords.includes(msgLower)) {\n  session.step = 'start';\n  session.data = {};\n}\n\nstaticData.sessions[phone] = session;\n\nreturn [{\n  json: {\n    phone,\n    message,\n    name,\n    step: session.step,\n    sessionData: session.data,\n    messageCount: session.messageCount\n  }\n}];\n"
+      },
+      "id": "43294130-9607-45ab-8aad-97dcba177d37",
+      "name": "🔐 Sesión · Parsear y Obtener Estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1280,
+        -1408
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.skip }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_patente",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_turno_servicio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_turno_nombre",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_turno_vehiculo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_turno_fecha",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_turno_hora",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_presupuesto_patente",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_catalogo_cat",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_garantia_patente",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_garantia_desc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": "awaiting_asesor_nombre",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1304946c-0a6e-4376-bb70-34a73709d458"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "id": "7b70d565-7df0-406c-beef-8258d013d573",
+      "name": "🗂️ Router Principal · Por Paso",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -1056,
+        -1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, name } = $input.first().json;\n\nconst session = staticData.sessions[phone] || { step: 'start', data: {} };\nsession.step = 'awaiting_menu';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nconst hour = new Date().getHours();\nlet saludo = 'Buenas';\nif (hour >= 6 && hour < 12) saludo = '¡Buenos días';\nelse if (hour >= 12 && hour < 19) saludo = '¡Buenas tardes';\nelse saludo = '¡Buenas noches';\n\nconst nombreDisplay = (name && name !== 'Cliente') ? `, *${name}*` : '';\n\nconst response = [\n  `🔧 ${saludo}${nombreDisplay}!`,\n  `Bienvenido/a a *Mecánica NOA*.`,\n  `Tu taller de confianza en Tucumán.`,\n  ``,\n  `¿En qué podemos ayudarte?`,\n  ``,\n  `1️⃣  Consultar estado de mi vehículo`,\n  `2️⃣  Sacar turno para un servicio`,\n  `3️⃣  Ver catálogo de servicios y precios`,\n  `4️⃣  Consultar mi presupuesto`,\n  `5️⃣  Hablar con un mecánico`,\n  `6️⃣  Reclamo / Garantía`,\n  ``,\n  `📌 _Respondé con el número de la opción._`,\n  `_Escribí *menu* para volver acá en cualquier momento._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "22aa55c9-0dd4-4027-87a6-8f3744d89051",
+      "name": "🏠 Menú Principal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -3520
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.trim() }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.trim() }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.trim() }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.trim() }}",
+                    "rightValue": "4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.trim() }}",
+                    "rightValue": "5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.trim() }}",
+                    "rightValue": "6",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f873665d-88c4-4280-8e3f-c00bdcc47716"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "id": "f81055a9-6af2-4dd0-8b95-5b1906da19f7",
+      "name": "🗂️ Router Menú · Por Opción",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -832,
+        -2720
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { phone, message } = $input.first().json;\nconst response = [\n  `❌ *\"${message}\"* no es una opción válida.`,\n  ``,\n  `Por favor elegí un número del *1 al 6*:`,\n  ``,\n  `1️⃣  Estado de mi vehículo`,\n  `2️⃣  Sacar turno`,\n  `3️⃣  Catálogo de servicios`,\n  `4️⃣  Mi presupuesto`,\n  `5️⃣  Hablar con un mecánico`,\n  `6️⃣  Reclamo / Garantía`,\n  ``,\n  `_Escribí *menu* para reiniciar._`\n].join('\\n');\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "164b14a8-d6e3-422a-a18a-dcf13205fcb7",
+      "name": "❌ Opción Inválida Menú",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// FLOW 1: Estado del vehículo en taller\n// PASO 1: Solicitar patente\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_patente';\nsession.data = { flow: 'estado_vehiculo' };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `🚗 *Estado de mi vehículo*`,\n  ``,\n  `Para consultar el estado de tu vehículo en el taller necesito la *patente (dominio)*.`,\n  ``,\n  `📋 Ingresá la patente *sin espacios ni guiones*:`,\n  ``,\n  `_Ejemplos: AB123CD · ABC123_`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "8f816b19-3d5d-4237-b7a5-d1f63eb2d9ba",
+      "name": "1️⃣ Flow1 · Pedir Patente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -3136
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// API FAKE — Consulta de estado de vehículo en taller\n// 🔴 REEMPLAZAR con HTTP Request real:\n// GET https://tu-api.com/vehiculos/{patente}/estado\n// Headers: { Authorization: 'Bearer {TOKEN}' }\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\n\n// Normalizar patente\nconst patente = message.toUpperCase().replace(/[^A-Z0-9]/g, '');\n\n// Validar formato: vieja (ABC123) o nueva (AB123CD)\nconst esValida = /^[A-Z]{3}[0-9]{3}$/.test(patente) || /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/.test(patente);\n\nif (!esValida || patente.length < 6) {\n  // Mantener en mismo paso para reintentar\n  return [{\n    json: {\n      phone,\n      response: [\n        `⚠️ Patente *\"${message}\"* no reconocida.`,\n        ``,\n        `Ingresala sin espacios ni guiones:`,\n        `_Formato viejo: ABC123 · Formato nuevo: AB123CD_`\n      ].join('\\n'),\n      patenteError: true\n    }\n  }];\n}\n\n// ── FAKE API RESPONSE ─────────────────────────────────────\n// Escenario según la suma de dígitos de la patente\nconst digits = patente.replace(/[^0-9]/g, '');\nconst suma = digits.split('').reduce((a, b) => a + parseInt(b), 0);\n\nlet vehiculoData;\n\nconst estados = [\n  // 0-3: No encontrado\n  null,\n  // 4-6: En espera de diagnóstico\n  {\n    encontrado: true,\n    patente,\n    vehiculo: 'Volkswagen Gol Trend 2018',\n    cliente: 'Juan Méndez',\n    ordens: 'OT-2025-0041',\n    estado: 'en_espera',\n    estadoLabel: '🟡 En espera de diagnóstico',\n    mecanico: 'Carlos Ruiz',\n    ingreso: '28/03/2025 09:00hs',\n    etapa: 1,\n    etapas_total: 4,\n    descripcion: 'El vehículo ingresó al taller. Estamos realizando el diagnóstico inicial.',\n    eta: 'Hoy antes de las 18:00hs'\n  },\n  // 7-10: En reparación\n  {\n    encontrado: true,\n    patente,\n    vehiculo: 'Toyota Hilux 2020',\n    cliente: 'María García',\n    ordens: 'OT-2025-0037',\n    estado: 'en_reparacion',\n    estadoLabel: '🔵 En reparación',\n    mecanico: 'Roberto Díaz',\n    ingreso: '27/03/2025 14:30hs',\n    etapa: 2,\n    etapas_total: 4,\n    descripcion: 'Se está realizando el cambio de embrague y revisión de caja de cambios.',\n    tareas: [\n      { label: '✅ Diagnóstico completado', done: true },\n      { label: '✅ Repuestos recibidos', done: true },\n      { label: '🔵 Cambio de embrague (en curso)', done: false },\n      { label: '⬜ Prueba de ruta', done: false }\n    ],\n    eta: 'Mañana 30/03 antes del mediodía'\n  },\n  // 11-14: Listo para retirar\n  {\n    encontrado: true,\n    patente,\n    vehiculo: 'Renault Sandero 2019',\n    cliente: 'Pedro López',\n    ordens: 'OT-2025-0033',\n    estado: 'listo',\n    estadoLabel: '✅ Listo para retirar',\n    mecanico: 'Sergio Torres',\n    ingreso: '25/03/2025 10:00hs',\n    egreso: '29/03/2025 16:00hs',\n    descripcion: 'Servicio de mantenimiento completo realizado. Cambio de aceite, filtros y revisión general.',\n    monto: 185000,\n    etapa: 4,\n    etapas_total: 4\n  }\n];\n\nif (suma <= 3) {\n  vehiculoData = { encontrado: false, patente };\n} else if (suma <= 6) {\n  vehiculoData = estados[1];\n} else if (suma <= 10) {\n  vehiculoData = estados[2];\n} else {\n  vehiculoData = estados[3];\n}\n\n// Resetear sesión\nconst session = staticData.sessions[phone] || {};\nsession.step = 'start';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nreturn [{ json: { phone, patente, vehiculoData } }];\n"
+      },
+      "id": "e54a010a-2a6f-4557-a82e-a1598e1cd4df",
+      "name": "🔌 API Fake · Estado Vehículo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        -3328
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { phone, patente, vehiculoData } = $input.first().json;\n\nif (vehiculoData?.patenteError) {\n  return [{ json: { phone, response: vehiculoData.response } }];\n}\n\nif (!vehiculoData?.encontrado) {\n  const response = [\n    `🔍 No encontramos ningún vehículo con patente *${patente}* en nuestro taller.`,\n    ``,\n    `Posibles motivos:`,\n    `  • El vehículo aún no fue ingresado al sistema`,\n    `  • La patente fue ingresada incorrectamente`,\n    ``,\n    `📞 Comunicate con nosotros:`,\n    `  • WhatsApp: *+54 9 381 XXX-XXXX*`,\n    `  • Tel: *0381-XXX-XXXX*`,\n    `  • Lun a Vie 8:00 a 18:00hs · Sáb 8:00 a 13:00hs`,\n    ``,\n    `_Escribí *menu* para volver al inicio._`\n  ].join('\\n');\n  return [{ json: { phone, response } }];\n}\n\nconst v = vehiculoData;\nconst formatMonto = (n) => '$' + Number(n).toLocaleString('es-AR');\n\n// Barra de progreso\nconst pct = Math.round((v.etapa / v.etapas_total) * 100);\nconst filled = Math.round(pct / 10);\nconst barra = '▓'.repeat(filled) + '░'.repeat(10 - filled);\n\nlet lines = [\n  `🚗 *Vehículo: ${v.vehiculo}*`,\n  `📋 OT: ${v.ordens} · Patente: *${v.patente}*`,\n  ``,\n  `${v.estadoLabel}`,\n  `[${barra}] ${pct}% completado`,\n  ``,\n  `👨‍🔧 Mecánico asignado: *${v.mecanico}*`,\n  `📅 Ingreso: ${v.ingreso}`,\n  ``,\n  `📝 ${v.descripcion}`,\n  ``\n];\n\nif (v.tareas) {\n  lines.push(`📌 *Detalle de tareas:*`);\n  v.tareas.forEach(t => lines.push(`  ${t.label}`));\n  lines.push(``);\n}\n\nif (v.eta) {\n  lines.push(`⏱️ *Entrega estimada:* ${v.eta}`);\n  lines.push(``);\n}\n\nif (v.estado === 'listo') {\n  lines = lines.concat([\n    `✅ *¡Tu vehículo está listo!*`,\n    ``,\n    `💰 *Total a abonar:* ${formatMonto(v.monto)}`,\n    `🕐 Horario de retiro: Lun-Vie 8:00-18:00 · Sáb 8:00-13:00`,\n    ``,\n    `📌 Traé el *comprobante de ingreso* al retirar.`,\n    ``\n  ]);\n}\n\nlines.push(`_Escribí *menu* para volver al inicio._`);\n\nreturn [{ json: { phone, response: lines.join('\\n') } }];\n"
+      },
+      "id": "72f6b40c-af89-43a8-b34e-5cb1d20db7a3",
+      "name": "🚗 Flow1 · Formatear Estado Vehículo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -3328
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// FLOW 2: Sacar turno (5 pasos)\n// PASO 1: Elegir servicio\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_turno_servicio';\nsession.data = { flow: 'turno' };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `📅 *Sacar Turno*`,\n  ``,\n  `¿Para qué tipo de servicio necesitás el turno?`,\n  ``,\n  `1️⃣  Service / Mantenimiento`,\n  `2️⃣  Reparación mecánica`,\n  `3️⃣  Diagnóstico computarizado`,\n  `4️⃣  Frenos y suspensión`,\n  `5️⃣  Electricidad del auto`,\n  `6️⃣  Cambio de aceite y filtros`,\n  `7️⃣  Transmisión / Embrague`,\n  `8️⃣  Otro servicio`,\n  ``,\n  `*Paso 1 de 5* — Respondé con el número:`,\n  `_Escribí *menu* para cancelar._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "c5baf90c-9e27-4381-9dc5-e7290fb16a11",
+      "name": "2️⃣ Flow2 · Turno · Elegir Servicio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -2944
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FLOW 2 PASO 2: Guardar servicio y pedir nombre\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\n\nconst servicios = {\n  '1': 'Service / Mantenimiento',\n  '2': 'Reparación mecánica',\n  '3': 'Diagnóstico computarizado',\n  '4': 'Frenos y suspensión',\n  '5': 'Electricidad del auto',\n  '6': 'Cambio de aceite y filtros',\n  '7': 'Transmisión / Embrague',\n  '8': 'Otro servicio'\n};\n\nconst servicioLabel = servicios[message.trim()];\nif (!servicioLabel) {\n  return [{\n    json: {\n      phone,\n      response: [\n        `⚠️ Opción no válida. Elegí un número del *1 al 8*:`,\n        `_Escribí *menu* para cancelar._`\n      ].join('\\n')\n    }\n  }];\n}\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_turno_nombre';\nsession.data = { ...session.data, servicioLabel };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `✅ Servicio: *${servicioLabel}*`,\n  ``,\n  `*Paso 2 de 5:*`,\n  `👤 ¿Cuál es tu *nombre y apellido*?`,\n  ``,\n  `_Ejemplo: Carlos Rodríguez_`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "d84709a1-2430-405f-a337-25beff6396f5",
+      "name": "2️⃣ Flow2 · Turno · Guardar Servicio · Pedir Nombre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1984
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FLOW 2 PASO 3: Guardar nombre y pedir descripción del vehículo\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst nombre = message.trim();\n\nif (nombre.length < 4 || !/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(nombre)) {\n  return [{\n    json: { phone, response: `⚠️ Por favor ingresá tu *nombre y apellido completo*:` }\n  }];\n}\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_turno_vehiculo';\nsession.data = { ...session.data, nombre };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `✅ Nombre: *${nombre}*`,\n  ``,\n  `*Paso 3 de 5:*`,\n  `🚗 Describí tu vehículo:`,\n  ``,\n  `Ingresá: *Marca · Modelo · Año · Patente*`,\n  ``,\n  `_Ejemplo: Toyota Corolla 2019 · AB123CD_`,\n  `_Ejemplo: Fiat Cronos 2022 · BC456EF_`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "fa287bed-f196-43ca-a260-0dde04da2016",
+      "name": "2️⃣ Flow2 · Turno · Guardar Nombre · Pedir Vehículo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1696
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FLOW 2 PASO 4: Guardar vehículo y mostrar fechas disponibles\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst vehiculo = message.trim();\n\nif (vehiculo.length < 5) {\n  return [{\n    json: { phone, response: `⚠️ Por favor describí tu vehículo (marca, modelo, año, patente):` }\n  }];\n}\n\n// Generar próximos 6 días hábiles\nconst diasHabiles = [];\nconst hoy = new Date();\nlet i = 0;\nwhile (diasHabiles.length < 6) {\n  i++;\n  const d = new Date(hoy);\n  d.setDate(hoy.getDate() + i);\n  const dow = d.getDay();\n  if (dow !== 0) { // Solo excluir domingo (sábado incluido con horario reducido)\n    const dd = String(d.getDate()).padStart(2, '0');\n    const mm = String(d.getMonth() + 1).padStart(2, '0');\n    const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];\n    const label = `${dias[dow]} ${dd}/${mm}`;\n    const esSabado = dow === 6;\n    diasHabiles.push({\n      code: String(diasHabiles.length + 1),\n      label,\n      esSabado\n    });\n  }\n}\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_turno_fecha';\nsession.data = { ...session.data, vehiculo, diasHabiles };\nstaticData.sessions[phone] = session;\n\nconst lines = [\n  `✅ Vehículo: *${vehiculo}*`,\n  ``,\n  `*Paso 4 de 5:*`,\n  `📅 ¿Qué día preferís el turno?`,\n  ``,\n  ...diasHabiles.map(d => `${d.code}️⃣  ${d.label}${d.esSabado ? ' _(solo mañana)_' : ''}`),\n  ``,\n  `Respondé con el *número* del día:`\n];\n\nreturn [{ json: { phone, response: lines.join('\\n') } }];\n"
+      },
+      "id": "58514ba7-e991-4851-a435-c251cc49bdb9",
+      "name": "2️⃣ Flow2 · Turno · Guardar Vehículo · Pedir Fecha",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1504
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FLOW 2 PASO 5: Guardar fecha y mostrar horarios\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nconst { diasHabiles } = session.data || {};\n\nconst diaSeleccionado = diasHabiles?.find(d => d.code === message.trim());\n\nif (!diaSeleccionado) {\n  return [{\n    json: {\n      phone,\n      response: `⚠️ Elegí un número del *1 al ${diasHabiles?.length || 6}*:`\n    }\n  }];\n}\n\n// Horarios según si es sábado o no\nconst horarios = diaSeleccionado.esSabado\n  ? ['08:00', '09:00', '10:00', '11:00', '12:00']\n  : ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];\n\nsession.step = 'awaiting_turno_hora';\nsession.data = { ...session.data, diaSeleccionado, horarios };\nstaticData.sessions[phone] = session;\n\nconst lines = [\n  `✅ Día seleccionado: *${diaSeleccionado.label}*`,\n  ``,\n  `*Paso 5 de 5:*`,\n  `🕐 ¿A qué horario te queda mejor?`,\n  ``,\n  ...horarios.map((h, idx) => `${idx + 1}️⃣  ${h}hs`),\n  ``,\n  `Respondé con el *número* del horario:`\n];\n\nreturn [{ json: { phone, response: lines.join('\\n') } }];\n"
+      },
+      "id": "b01acaf5-cae1-4544-8658-8eaba4537470",
+      "name": "2️⃣ Flow2 · Turno · Guardar Fecha · Pedir Hora",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1312
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// API FAKE — Reservar turno en sistema de agenda\n// 🔴 REEMPLAZAR con HTTP Request real:\n// POST https://tu-api.com/turnos/reservar\n// Body: { nombre, vehiculo, servicio, fecha, horario, phone }\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nconst { nombre, vehiculo, servicioLabel, diaSeleccionado, horarios } = session.data || {};\n\nconst idx = parseInt(message.trim()) - 1;\nconst horarioSeleccionado = horarios?.[idx];\n\nif (!horarioSeleccionado) {\n  return [{\n    json: {\n      phone,\n      response: `⚠️ Horario inválido. Elegí un número del *1 al ${horarios?.length || 8}*:`\n    }\n  }];\n}\n\n// FAKE API — Simular reserva\nconst nroTurno = 'TRN-' + String(Date.now()).slice(-6);\nconst apiResponse = {\n  success: true,\n  nroTurno,\n  nombre,\n  vehiculo,\n  servicio: servicioLabel,\n  fecha: diaSeleccionado.label,\n  horario: horarioSeleccionado + 'hs',\n  duracion_estimada: '1 a 2 horas (depende del diagnóstico)',\n  direccion: 'Av. Mate de Luna 1500, Tucumán',\n  notas: 'Traer el vehículo con tanque mínimo a ¼'\n};\n\nsession.step = 'start';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nreturn [{ json: { phone, turnoData: apiResponse } }];\n"
+      },
+      "id": "d5e73892-9aaf-4fac-927d-81783304e984",
+      "name": "🔌 API Fake · Reservar Turno",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        -1120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { phone, turnoData } = $input.first().json;\nconst { nroTurno, nombre, vehiculo, servicio, fecha, horario, duracion_estimada, direccion, notas } = turnoData;\n\nconst response = [\n  `✅ *¡Turno confirmado, ${nombre}!*`,\n  ``,\n  `🎫 *Comprobante N°:* ${nroTurno}`,\n  ``,\n  `📋 *Detalle del turno:*`,\n  `├ Servicio:  *${servicio}*`,\n  `├ Vehículo:  ${vehiculo}`,\n  `├ Fecha:     *${fecha}*`,\n  `├ Horario:   *${horario}*`,\n  `└ Duración:  ${duracion_estimada}`,\n  ``,\n  `📍 *Dirección:* ${direccion}`,\n  ``,\n  `📌 *Recordá:*`,\n  `  • Traer este número de turno: *${nroTurno}*`,\n  `  • DNI del titular del vehículo`,\n  `  • ${notas}`,\n  ``,\n  `⚠️ Si necesitás cancelar o reprogramar:`,\n  `  📲 Escribinos con *12hs de anticipación*`,\n  ``,\n  `¡Te esperamos! 🔧`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "3a3010e5-6953-4125-9b3c-324512f0ec34",
+      "name": "✅ Flow2 · Confirmar Turno",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// API FAKE — Catálogo de Servicios y Precios\n// 🔴 REEMPLAZAR con HTTP Request real:\n// GET https://tu-api.com/servicios?activos=true&categoria=all\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone } = $input.first().json;\n\nconst catalogo = [\n  {\n    id: '1',\n    emoji: '🔧',\n    categoria: 'Service y Mantenimiento',\n    servicios: [\n      { nombre: 'Service estándar (aceite + filtros)', desde: 45000 },\n      { nombre: 'Service completo (+ distribución)', desde: 180000 },\n      { nombre: 'Cambio de aceite 0km', desde: 28000 },\n      { nombre: 'Revisión pre-viaje', desde: 15000 }\n    ]\n  },\n  {\n    id: '2',\n    emoji: '🛞',\n    categoria: 'Frenos y Suspensión',\n    servicios: [\n      { nombre: 'Pastillas de freno (par delantero)', desde: 55000 },\n      { nombre: 'Discos de freno (par)', desde: 95000 },\n      { nombre: 'Amortiguadores (par)', desde: 120000 },\n      { nombre: 'Alineación y balanceo', desde: 18000 }\n    ]\n  },\n  {\n    id: '3',\n    emoji: '⚙️',\n    categoria: 'Transmisión y Motor',\n    servicios: [\n      { nombre: 'Embrague completo', desde: 280000 },\n      { nombre: 'Correa de distribución', desde: 150000 },\n      { nombre: 'Junta de culata', desde: 220000 },\n      { nombre: 'Diagnóstico computarizado', desde: 8000 }\n    ]\n  },\n  {\n    id: '4',\n    emoji: '⚡',\n    categoria: 'Sistema Eléctrico',\n    servicios: [\n      { nombre: 'Diagnóstico eléctrico', desde: 12000 },\n      { nombre: 'Cambio de batería', desde: 45000 },\n      { nombre: 'Reparación de alternador', desde: 80000 },\n      { nombre: 'Instalación alarma/central', desde: 35000 }\n    ]\n  },\n  {\n    id: '5',\n    emoji: '❄️',\n    categoria: 'Aire Acondicionado',\n    servicios: [\n      { nombre: 'Carga de gas (recarga)', desde: 25000 },\n      { nombre: 'Limpieza del sistema A/C', desde: 18000 },\n      { nombre: 'Cambio de compresor', desde: 180000 },\n      { nombre: 'Filtro de habitáculo', desde: 12000 }\n    ]\n  }\n];\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_catalogo_cat';\nsession.data = { flow: 'catalogo', catalogo };\nstaticData.sessions[phone] = session;\n\nconst lines = [\n  `💼 *Catálogo de Servicios — Mecánica NOA*`,\n  ``,\n  `Seleccioná una categoría para ver los servicios y precios:`,\n  ``,\n  ...catalogo.map(c => `${c.id}️⃣  ${c.emoji} ${c.categoria}`),\n  ``,\n  `Respondé con el *número* de la categoría:`,\n  `_Los precios indicados son orientativos. El precio final puede variar según el vehículo._`\n];\n\nreturn [{ json: { phone, response: lines.join('\\n') } }];\n"
+      },
+      "id": "53d8aaa1-3186-47be-8e11-73ef37ce7225",
+      "name": "3️⃣ Flow3 · API Fake Catálogo · Mostrar Categorías",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -2752
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FLOW 3 PASO 2: Mostrar servicios de la categoría elegida\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nconst { catalogo } = session.data || {};\n\nconst cat = catalogo?.find(c => c.id === message.trim());\n\nsession.step = 'start';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nif (!cat) {\n  return [{\n    json: {\n      phone,\n      response: [\n        `⚠️ Opción inválida. Elegí un número del *1 al 5*:`,\n        `_Escribí *menu* para volver al inicio._`\n      ].join('\\n')\n    }\n  }];\n}\n\nconst formatMonto = (n) => '$' + n.toLocaleString('es-AR');\n\nconst lines = [\n  `${cat.emoji} *${cat.categoria}*`,\n  ``,\n  `💰 Servicios y precios orientativos:`,\n  ``,\n  ...cat.servicios.map((s, i) => `${i + 1}. *${s.nombre}*\\n   Desde ${formatMonto(s.desde)}`),\n  ``,\n  `⚠️ _Los precios pueden variar según marca y modelo del vehículo._`,\n  ``,\n  `¿Querés sacar un turno?`,\n  `  • Respondé *2* para agendar`,\n  `  • Respondé *3* para ver otras categorías`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n];\n\nreturn [{ json: { phone, response: lines.join('\\n') } }];\n"
+      },
+      "id": "095da6c4-b589-4790-a988-9bc885b00665",
+      "name": "3️⃣ Flow3 · Detalle Categoría",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// FLOW 4: Consulta de Presupuesto\n// PASO 1: Pedir patente\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_presupuesto_patente';\nsession.data = { flow: 'presupuesto' };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `💵 *Consultar Presupuesto*`,\n  ``,\n  `Voy a buscar el último presupuesto emitido para tu vehículo.`,\n  ``,\n  `📋 Ingresá la *patente* de tu vehículo:`,\n  ``,\n  `_Ejemplo: AB123CD · ABC123_`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "3892a9b6-8863-4989-84cd-d79e9db2a349",
+      "name": "4️⃣ Flow4 · Presupuesto · Pedir Patente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -2560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// API FAKE — Consulta de Presupuesto por patente\n// 🔴 REEMPLAZAR con HTTP Request real:\n// GET https://tu-api.com/presupuestos?patente={patente}&estado=vigente\n// Headers: { Authorization: 'Bearer {TOKEN}' }\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst patente = message.toUpperCase().replace(/[^A-Z0-9]/g, '');\n\nconst esValida = /^[A-Z]{3}[0-9]{3}$/.test(patente) || /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/.test(patente);\nif (!esValida || patente.length < 6) {\n  return [{\n    json: {\n      phone,\n      response: [\n        `⚠️ Patente *\"${message}\"* no reconocida.`,\n        `Ingresala sin espacios: _AB123CD · ABC123_`\n      ].join('\\n')\n    }\n  }];\n}\n\n// FAKE API — Presupuesto simulado\nconst digits = patente.replace(/[^0-9]/g, '');\nconst suma = digits.split('').reduce((a, b) => a + parseInt(b), 0);\n\nlet presupuestoData;\n\nif (suma <= 4) {\n  presupuestoData = { encontrado: false, patente };\n} else {\n  const nro = 'PRES-' + String(suma * 100 + 2025);\n  const hoy = new Date();\n  const venc = new Date(hoy);\n  venc.setDate(hoy.getDate() + (30 - suma % 10));\n\n  const formatFecha = (d) => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;\n\n  const items = suma % 3 === 0\n    ? [\n        { descripcion: 'Mano de obra — cambio de embrague', monto: 120000 },\n        { descripcion: 'Kit embrague (disco + plato + collarín)', monto: 185000 },\n        { descripcion: 'Lubricantes y selladores', monto: 8500 }\n      ]\n    : [\n        { descripcion: 'Mano de obra — service completo', monto: 45000 },\n        { descripcion: 'Aceite 5W-40 sintético (4L)', monto: 32000 },\n        { descripcion: 'Filtro de aceite', monto: 8000 },\n        { descripcion: 'Filtro de aire', monto: 12500 }\n      ];\n\n  const subtotal = items.reduce((a, i) => a + i.monto, 0);\n  const iva = Math.round(subtotal * 0.21);\n  const total = subtotal + iva;\n\n  presupuestoData = {\n    encontrado: true,\n    patente,\n    nro,\n    vehiculo: suma % 2 === 0 ? 'Toyota Hilux 2.8 TDI 2021' : 'Chevrolet Onix 1.0T 2022',\n    fecha_emision: formatFecha(hoy),\n    fecha_vencimiento: formatFecha(venc),\n    vigente: venc >= hoy,\n    mecanico: 'Roberto Díaz',\n    items,\n    subtotal,\n    iva,\n    total\n  };\n}\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'start';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nreturn [{ json: { phone, presupuestoData } }];\n"
+      },
+      "id": "825a4e95-cae8-4405-b3d9-dc5f0d528dc9",
+      "name": "🔌 API Fake · Consultar Presupuesto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { phone, presupuestoData } = $input.first().json;\n\nif (!presupuestoData?.encontrado) {\n  const response = [\n    `🔍 No encontramos presupuestos vigentes para la patente *${presupuestoData?.patente}*.`,\n    ``,\n    `Si querés solicitar un presupuesto nuevo:`,\n    `  • Traé el vehículo al taller para diagnóstico`,\n    `  • O escribinos para coordinar`,\n    ``,\n    `📞 *0381-XXX-XXXX* · Lun-Vie 8:00-18:00`,\n    ``,\n    `_Escribí *menu* para volver al inicio._`\n  ].join('\\n');\n  return [{ json: { phone, response } }];\n}\n\nconst p = presupuestoData;\nconst fmt = (n) => '$' + Number(n).toLocaleString('es-AR');\n\nconst estadoVigencia = p.vigente\n  ? `✅ *VIGENTE* hasta ${p.fecha_vencimiento}`\n  : `⚠️ *VENCIDO* el ${p.fecha_vencimiento}`;\n\nconst itemLines = p.items.map((item, i) =>\n  `${i + 1}. ${item.descripcion}\\n   ${fmt(item.monto)}`\n);\n\nconst response = [\n  `💵 *Presupuesto ${p.nro}*`,\n  ``,\n  `🚗 Vehículo:  *${p.vehiculo}*`,\n  `📋 Patente:   ${p.patente}`,\n  `📅 Emisión:   ${p.fecha_emision}`,\n  `🗓️ Vigencia:  ${estadoVigencia}`,\n  `👨‍🔧 Mecánico:  ${p.mecanico}`,\n  ``,\n  `📦 *Detalle:*`,\n  ``,\n  ...itemLines,\n  ``,\n  `─────────────────────`,\n  `Subtotal:  ${fmt(p.subtotal)}`,\n  `IVA 21%:   ${fmt(p.iva)}`,\n  `*Total:    ${fmt(p.total)}*`,\n  `─────────────────────`,\n  ``,\n  p.vigente\n    ? `✅ Para *aceptar el presupuesto* respondé *2* para sacar turno.`\n    : `⚠️ Este presupuesto está vencido. Escribí *2* para solicitar uno actualizado.`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "1b6ff8fa-59a5-4da4-9f0b-0c75057828c7",
+      "name": "💵 Flow4 · Mostrar Presupuesto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// FLOW 5: Contacto con mecánico/asesor\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_asesor_nombre';\nsession.data = { flow: 'asesor', ts: Date.now() };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `👨‍🔧 *Hablar con un mecánico*`,\n  ``,\n  `Vamos a conectarte con uno de nuestros técnicos especializados.`,\n  ``,\n  `🕐 *Horario de atención:*`,\n  `  • Lun a Vie: 8:00 a 18:00hs`,\n  `  • Sábados:   8:00 a 13:00hs`,\n  ``,\n  `Para agilizar la atención, ingresá tu *nombre y apellido*:`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "06c12d32-dfcc-4540-8a6c-341e05705f92",
+      "name": "5️⃣ Flow5 · Asesor · Pedir Nombre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -2368
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// API FAKE — Registrar solicitud de contacto con mecánico\n// 🔴 REEMPLAZAR con HTTP Request real:\n// POST https://tu-api.com/contacto/solicitudes\n// Body: { nombre, phone, motivo, timestamp }\n//\n// También se podría integrar con:\n// - Slack webhook (notificación al equipo)\n// - Email al encargado\n// - Sistema de tickets interno\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst nombre = message.trim();\n\nif (nombre.length < 3) {\n  return [{\n    json: { phone, response: `⚠️ Por favor ingresá tu *nombre y apellido completo*:` }\n  }];\n}\n\n// FAKE API — Simular registro en sistema\nconst nroContacto = 'CON-' + String(Date.now()).slice(-5);\nconst hora = new Date();\nconst horarioAtencion = hora.getHours() >= 8 &&\n  (hora.getHours() < 18 || (hora.getDay() === 6 && hora.getHours() < 13));\n\nconst apiResponse = {\n  success: true,\n  nroContacto,\n  nombre,\n  phone,\n  enHorario: horarioAtencion,\n  tiempoEstimado: horarioAtencion ? '15-30 minutos' : 'próximo día hábil'\n};\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'start';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nreturn [{ json: { phone, asesorData: apiResponse } }];\n"
+      },
+      "id": "5f954285-d702-4768-8bc7-ebb0194a6979",
+      "name": "🔌 API Fake · Registrar Solicitud Mecánico",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { phone, asesorData } = $input.first().json;\nconst { nroContacto, nombre, enHorario, tiempoEstimado } = asesorData;\n\nconst response = [\n  `✅ *Solicitud registrada*`,\n  ``,\n  `Gracias, *${nombre}*.`,\n  `N° de contacto: *${nroContacto}*`,\n  ``,\n  enHorario\n    ? `🟢 *Estamos en horario de atención.*\\nUn mecánico te va a contactar en los próximos *${tiempoEstimado}*.`\n    : `🟡 *Fuera del horario de atención.*\\nTe contactaremos el ${tiempoEstimado}.\\n🕐 Atendemos Lun-Vie 8:00-18:00 · Sáb 8:00-13:00`,\n  ``,\n  `📞 Si es urgente podés llamarnos al:`,\n  `  *0381-XXX-XXXX*`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "77a6bf19-aa07-4fbf-888b-1ba191b84664",
+      "name": "✅ Flow5 · Confirmar Derivación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// FLOW 6: Reclamo / Garantía de trabajo\n// PASO 1: Pedir patente\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone } = $input.first().json;\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_garantia_patente';\nsession.data = { flow: 'garantia' };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `🛡️ *Reclamo / Garantía de trabajo*`,\n  ``,\n  `Todos nuestros trabajos tienen *garantía de 90 días* en mano de obra.`,\n  `Los repuestos tienen la garantía del fabricante.`,\n  ``,\n  `Para iniciar el reclamo necesito la *patente* del vehículo:`,\n  ``,\n  `_Ejemplo: AB123CD · ABC123_`,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "972c4392-5ec3-4e20-bf02-3b0888d05c57",
+      "name": "6️⃣ Flow6 · Garantía · Pedir Patente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -2176
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FLOW 6 PASO 2: Validar patente y pedir descripción del problema\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst patente = message.toUpperCase().replace(/[^A-Z0-9]/g, '');\n\nconst esValida = /^[A-Z]{3}[0-9]{3}$/.test(patente) || /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/.test(patente);\nif (!esValida || patente.length < 6) {\n  return [{\n    json: {\n      phone,\n      response: [\n        `⚠️ Patente *\"${message}\"* no reconocida.`,\n        `Ingresala sin espacios: _AB123CD · ABC123_`\n      ].join('\\n')\n    }\n  }];\n}\n\nconst session = staticData.sessions[phone] || {};\nsession.step = 'awaiting_garantia_desc';\nsession.data = { ...session.data, patente };\nstaticData.sessions[phone] = session;\n\nconst response = [\n  `✅ Patente: *${patente}*`,\n  ``,\n  `📝 Describí el problema o inconveniente que estás teniendo:`,\n  ``,\n  `_Ejemplos:_`,\n  `_• El freno hace ruido después del cambio de pastillas_`,\n  `_• El auto sigue perdiendo aceite luego del service_`,\n  `_• La luz del check engine volvió a encenderse_`,\n  ``,\n  `_Cuanto más detalle, mejor podemos ayudarte._`\n].join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "ce0fe851-1620-43d2-97d7-c690f6db2dc7",
+      "name": "6️⃣ Flow6 · Garantía · Validar Patente · Pedir Descripción",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// API FAKE — Registrar reclamo y verificar garantía\n// 🔴 REEMPLAZAR con HTTP Request real:\n// POST https://tu-api.com/reclamos\n// Body: { patente, descripcion, phone, timestamp }\n//\n// Internamente debería:\n// 1. Buscar último trabajo realizado para esa patente\n// 2. Verificar si está dentro del período de garantía\n// 3. Crear ticket de reclamo\n// 4. Notificar al encargado de taller\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.sessions) staticData.sessions = {};\n\nconst { phone, message } = $input.first().json;\nconst descripcion = message.trim();\n\nif (descripcion.length < 10) {\n  return [{\n    json: {\n      phone,\n      response: [\n        `⚠️ La descripción es muy corta.`,\n        `Por favor contanos el problema con más detalle para poder ayudarte mejor:`\n      ].join('\\n')\n    }\n  }];\n}\n\nconst session = staticData.sessions[phone] || {};\nconst { patente } = session.data || {};\n\n// FAKE API — Simular búsqueda de último trabajo y verificación de garantía\nconst digits = patente?.replace(/[^0-9]/g, '') || '0';\nconst suma = digits.split('').reduce((a, b) => a + parseInt(b), 0);\n\nconst hoy = new Date();\nconst fechaUltimoTrabajo = new Date(hoy);\nfechaUltimoTrabajo.setDate(hoy.getDate() - (suma * 3));\nconst diasDesdeUltimoTrabajo = suma * 3;\nconst enGarantia = diasDesdeUltimoTrabajo <= 90;\n\nconst formatFecha = (d) => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;\n\nconst nroReclamo = 'REC-' + String(Date.now()).slice(-6);\nconst apiResponse = {\n  success: true,\n  nroReclamo,\n  patente,\n  descripcion,\n  ultimoTrabajo: {\n    ordens: `OT-2025-${String(suma * 7).padStart(4, '0')}`,\n    fecha: formatFecha(fechaUltimoTrabajo),\n    descripcion: diasDesdeUltimoTrabajo <= 45 ? 'Service completo + cambio de pastillas' : 'Cambio de correa de distribución',\n    diasTranscurridos: diasDesdeUltimoTrabajo\n  },\n  enGarantia,\n  diasGarantia: 90,\n  diasRestantesGarantia: Math.max(0, 90 - diasDesdeUltimoTrabajo),\n  prioridad: enGarantia ? 'ALTA' : 'NORMAL',\n  plazoContacto: enGarantia ? '24 horas hábiles' : '48 horas hábiles'\n};\n\nsession.step = 'start';\nsession.data = {};\nstaticData.sessions[phone] = session;\n\nreturn [{ json: { phone, reclamoData: apiResponse } }];\n"
+      },
+      "id": "28488d90-41f6-434b-8c08-bff462cb5086",
+      "name": "🔌 API Fake · Registrar Reclamo/Garantía",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { phone, reclamoData } = $input.first().json;\nconst { nroReclamo, patente, ultimoTrabajo, enGarantia, diasRestantesGarantia, plazoContacto } = reclamoData;\n\nconst garantiaLine = enGarantia\n  ? `✅ *Trabajo dentro de garantía* (${diasRestantesGarantia} días restantes)`\n  : `⚠️ El último trabajo superó los *90 días de garantía*`;\n\nconst prioridadLine = enGarantia\n  ? `🔴 *Prioridad ALTA* — Vamos a contactarte en *${plazoContacto}*`\n  : `🟡 *Prioridad NORMAL* — Vamos a contactarte en *${plazoContacto}*`;\n\nconst response = [\n  `🛡️ *Reclamo registrado*`,\n  ``,\n  `📋 N° de reclamo: *${nroReclamo}*`,\n  `🚗 Patente: ${patente}`,\n  ``,\n  `🔎 *Último trabajo registrado:*`,\n  `  OT: ${ultimoTrabajo.ordens}`,\n  `  Fecha: ${ultimoTrabajo.fecha}`,\n  `  Servicio: ${ultimoTrabajo.descripcion}`,\n  `  Hace ${ultimoTrabajo.diasTranscurridos} días`,\n  ``,\n  garantiaLine,\n  ``,\n  prioridadLine,\n  ``,\n  `📌 Para el seguimiento del reclamo:`,\n  `  • Mencioná el código *${nroReclamo}*`,\n  `  • Llamanos al *0381-XXX-XXXX*`,\n  ``,\n  enGarantia\n    ? `🔧 Si el problema es urgente podés traer el vehículo directamente.\\nMencioná el N° ${nroReclamo} al llegar.`\n    : ``,\n  ``,\n  `_Escribí *menu* para volver al inicio._`\n].filter(l => l !== undefined).join('\\n');\n\nreturn [{ json: { phone, response } }];\n"
+      },
+      "id": "25653bc5-3f3a-4975-a04b-6e83ed146333",
+      "name": "✅ Flow6 · Confirmar Reclamo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('[MECANICO-BOT] Mensaje ignorado — skip:', $input.first().json);\nreturn [{ json: { skipped: true } }];\n"
+      },
+      "id": "c2b222d5-62db-4d4a-8fba-b635996df03a",
+      "name": "🛡️ Filtro · Mensaje Skip",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        -1840
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.1.3:5001/message/send-text",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "session",
+              "value": "={{ $('📩 Webhook · Recibir Mensaje WA').item.json.body.session }}"
+            },
+            {
+              "name": "to",
+              "value": "={{ $('📩 Webhook · Recibir Mensaje WA').item.json.body.from }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.response }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "fb32d0a7-d74f-4ac7-9ae7-bbafcbf93cd0",
+      "name": "📤 Enviar Mensaje WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -384,
+        -1664
+      ]
+    }
+  ],
+  "pinData": {
+    "📩 Webhook · Recibir Mensaje WA": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "key": "",
+            "user-agent": "axios/1.13.2",
+            "content-length": "153",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "192.168.1.3:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "session": "sebastian_contreras",
+            "from": "5493813852476@s.whatsapp.net",
+            "message": "hola",
+            "media": {
+              "image": null,
+              "video": null,
+              "document": null,
+              "audio": null
+            }
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/chatbot",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "📩 Webhook · Recibir Mensaje WA": {
+      "main": [
+        [
+          {
+            "node": "🔐 Sesión · Parsear y Obtener Estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔐 Sesión · Parsear y Obtener Estado": {
+      "main": [
+        [
+          {
+            "node": "🗂️ Router Principal · Por Paso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🗂️ Router Principal · Por Paso": {
+      "main": [
+        [
+          {
+            "node": "🛡️ Filtro · Mensaje Skip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🏠 Menú Principal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🗂️ Router Menú · Por Opción",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔌 API Fake · Estado Vehículo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2️⃣ Flow2 · Turno · Guardar Servicio · Pedir Nombre",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2️⃣ Flow2 · Turno · Guardar Nombre · Pedir Vehículo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2️⃣ Flow2 · Turno · Guardar Vehículo · Pedir Fecha",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2️⃣ Flow2 · Turno · Guardar Fecha · Pedir Hora",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔌 API Fake · Reservar Turno",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔌 API Fake · Consultar Presupuesto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "3️⃣ Flow3 · Detalle Categoría",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "6️⃣ Flow6 · Garantía · Validar Patente · Pedir Descripción",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔌 API Fake · Registrar Reclamo/Garantía",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔌 API Fake · Registrar Solicitud Mecánico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🏠 Menú Principal": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🗂️ Router Menú · Por Opción": {
+      "main": [
+        [
+          {
+            "node": "1️⃣ Flow1 · Pedir Patente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2️⃣ Flow2 · Turno · Elegir Servicio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "3️⃣ Flow3 · API Fake Catálogo · Mostrar Categorías",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "4️⃣ Flow4 · Presupuesto · Pedir Patente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "5️⃣ Flow5 · Asesor · Pedir Nombre",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "6️⃣ Flow6 · Garantía · Pedir Patente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1️⃣ Flow1 · Pedir Patente": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 API Fake · Estado Vehículo": {
+      "main": [
+        [
+          {
+            "node": "🚗 Flow1 · Formatear Estado Vehículo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚗 Flow1 · Formatear Estado Vehículo": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2️⃣ Flow2 · Turno · Elegir Servicio": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2️⃣ Flow2 · Turno · Guardar Servicio · Pedir Nombre": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2️⃣ Flow2 · Turno · Guardar Nombre · Pedir Vehículo": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2️⃣ Flow2 · Turno · Guardar Vehículo · Pedir Fecha": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2️⃣ Flow2 · Turno · Guardar Fecha · Pedir Hora": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 API Fake · Reservar Turno": {
+      "main": [
+        [
+          {
+            "node": "✅ Flow2 · Confirmar Turno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Flow2 · Confirmar Turno": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3️⃣ Flow3 · API Fake Catálogo · Mostrar Categorías": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3️⃣ Flow3 · Detalle Categoría": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4️⃣ Flow4 · Presupuesto · Pedir Patente": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 API Fake · Consultar Presupuesto": {
+      "main": [
+        [
+          {
+            "node": "💵 Flow4 · Mostrar Presupuesto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💵 Flow4 · Mostrar Presupuesto": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5️⃣ Flow5 · Asesor · Pedir Nombre": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 API Fake · Registrar Solicitud Mecánico": {
+      "main": [
+        [
+          {
+            "node": "✅ Flow5 · Confirmar Derivación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Flow5 · Confirmar Derivación": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6️⃣ Flow6 · Garantía · Pedir Patente": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6️⃣ Flow6 · Garantía · Validar Patente · Pedir Descripción": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 API Fake · Registrar Reclamo/Garantía": {
+      "main": [
+        [
+          {
+            "node": "✅ Flow6 · Confirmar Reclamo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Flow6 · Confirmar Reclamo": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "❌ Opción Inválida Menú": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Mensaje WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "43a85926-5196-4bd3-8bb3-9a26c3450082",
+  "meta": {
+    "instanceId": "908e46fc97c0dc103a13ec62c1a95e43569a40daa17968993801e3fe49c6880a"
+  },
+  "id": "olgJXESec310oRpH",
+  "tags": []
+}

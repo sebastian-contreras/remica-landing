@@ -353,3 +353,8 @@
 :focus-visible {
   @apply outline-hidden ring-2 ring-primary-500 dark:ring-primary-400;
 }
+
+/* Alpine.js x-cloak */
+[x-cloak] {
+  display: none !important;
+}
