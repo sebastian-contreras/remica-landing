@@ -3,9 +3,60 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import HeroSection from '../components/HeroSection.astro';
+import { generateFAQSchema } from '../lib/schema';
+
+// FAQs específicas para Rumica
+const faqs = [
+  {
+    question: '¿Qué tipo de software desarrollan?',
+    answer: 'Desarrollamos software a medida adaptado a las necesidades específicas de cada empresa. Esto incluye sistemas de gestión, plataformas web, aplicaciones móviles, integraciones con sistemas existentes y más.'
+  },
+  {
+    question: '¿Qué es n8n y cómo puede ayudar a mi empresa?',
+    answer: 'n8n es una herramienta de automatización que permite conectar diferentes aplicaciones y flujos de trabajo. Automatizamos procesos repetitivos como notifications, sincronización de datos, generación de reportes y más, ahorrando tiempo y reduciendo errores manuales.'
+  },
+  {
+    question: '¿Ofrecen chatbots para WhatsApp Business?',
+    answer: 'Sí, desarrollamos chatbots personalizados para WhatsApp Business API que permiten automatizar atención al cliente, enviar notificaciones, gestionar pedidos y mejorar la comunicación con tus clientes.'
+  },
+  {
+    question: '¿En qué zonas trabajan?',
+    answer: 'Trabajamos con empresas de todo Tucumán, el NOA (Noroeste Argentino) y toda Argentina. Podemos realizar reuniones virtuales o presenciales según tu preferencia.'
+  },
+  {
+    question: '¿Cuánto tiempo tarda el desarrollo de un sistema a medida?',
+    answer: 'El tiempo de desarrollo depende de la complejidad del proyecto. Un proyecto simple puede tomar 2-4 semanas, mientras que sistemas más complejos pueden requerir varios meses. Te damos un estimado preciso después de analizar tus requisitos.'
+  },
+  {
+    question: '¿Ofrecen mantenimiento post-desarrollo?',
+    answer: 'Sí, ofrecemos planes de mantenimiento y soporte para asegurar que tu sistema funcione correctamente. Esto incluye actualizaciones, correcciones de bugs y mejoras continuas.'
+  },
+  {
+    question: '¿Necesito conocimientos técnicos para usar el software?',
+    answer: 'No, diseñamos nuestras soluciones pensando en la facilidad de uso. proporcionamos capacitación para que tu equipo pueda utilizar el sistema sin problemas. También incluimos documentación y manuales de usuario.'
+  },
+  {
+    question: '¿Cómo es el proceso de trabajo?',
+    answer: 'Nuestro proceso incluye: 1) Reunión inicial para entender tus necesidades, 2) Propuesta técnica y presupuesto, 3) Desarrollo iterativo con revisiones, 4) Pruebas y QA, 5) Implementación y capacitación, 6) Soporte continuo.'
+  },
+  {
+    question: '¿Pueden integrar el nuevo sistema con los que ya tengo?',
+    answer: 'Sí, una de nuestras fortalezas es la integración de sistemas. Conectamos tu nuevo software con ERPs, CRMs, sistemas de facturación, APIs externas y cualquier otra herramienta que uses en tu empresa.'
+  },
+  {
+    question: '¿Cuál es el costo de desarrollar software a medida?',
+    answer: 'El costo varía según la complejidad y alcance del proyecto. Ofrecemos diferentes modelos de precios: por proyecto fijo, por hora o planes mensuales. Te invitamos a contactarnos para obtener una cotización personalizada.'
+  }
+];
+
+const faqSchema = generateFAQSchema(faqs);
 ---
 
-<Layout title="Preguntas frecuentes" noindex={true}>
+<Layout 
+  title="Preguntas frecuentes" 
+  description="Respuestas a las preguntas más frecuentes sobre desarrollo de software, automatizaciones con n8n y chatbots para empresas en Tucumán."
+  structuredData={faqSchema}
+>
   <Header />
   <main>
     <HeroSection 

@@ -2,9 +2,21 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { generateServiceSchema } from '../lib/schema';
+
+const serviceSchema = generateServiceSchema({
+  name: 'Desarrollo de Software a Medida',
+  description: 'Desarrollamos software personalizado adaptado a las necesidades específicas de tu empresa. Sistemas de gestión, plataformas web, aplicaciones móviles y más.',
+  areaServed: 'Argentina',
+  priceRange: '$$$'
+});
 ---
 
-<Layout title="Features" noindex={true}>
+<Layout 
+  title="Características y Servicios"
+  description="Conoce nuestras capacidades de desarrollo de software a medida, automatizaciones con n8n y chatbots para empresas en Tucumán y toda Argentina."
+  structuredData={serviceSchema}
+>
   <Header />
   <main>
     <!-- Hero Section -->

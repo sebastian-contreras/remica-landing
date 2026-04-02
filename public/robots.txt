@@ -1,0 +1,10 @@
+# https://rumica.com.ar/robots.txt
+User-agent: *
+Allow: /
+
+# Disallow admin/private routes
+Disallow: /api/
+Disallow: /_/
+
+# Sitemap
+Sitemap: https://rumica.com.ar/sitemap-index.xml

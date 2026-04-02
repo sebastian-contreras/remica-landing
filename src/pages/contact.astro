@@ -4,12 +4,15 @@ import Header from '../components/Header.astro';
 import ContactForm from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import HeroSection from '../components/HeroSection.astro';
+import { generateContactPageSchema } from '../lib/schema';
+
+const contactSchema = generateContactPageSchema();
 ---
 
 <Layout
   title="Contacto"
-  description="Canales de contacto de Rumica para consultas sobre software a medida, automatizaciones y chatbots."
-  noindex={true}
+  description="Canales de contacto de Rumica para consultas sobre software a medida, automatizaciones y chatbots. Escribinos y te respondemos."
+  structuredData={contactSchema}
 >
   <Header />
   <main>

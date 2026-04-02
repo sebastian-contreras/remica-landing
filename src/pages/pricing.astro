@@ -5,9 +5,23 @@ import PricingCmp from '../components/Pricing.astro';
 import Newsletter from '../components/Newsletter.astro';
 import Footer from '../components/Footer.astro';
 import HeroSection from '../components/HeroSection.astro';
+import { generateAggregateOfferSchema } from '../lib/schema';
+
+// Pricing schema
+const offers = [
+  { name: 'Starter', price: 29, priceCurrency: 'USD', priceType: 'recurring' as const, billingPeriod: 'month' as const },
+  { name: 'Professional', price: 79, priceCurrency: 'USD', priceType: 'recurring' as const, billingPeriod: 'month' as const },
+  { name: 'Enterprise', price: 199, priceCurrency: 'USD', priceType: 'recurring' as const, billingPeriod: 'month' as const },
+];
+
+const pricingSchema = generateAggregateOfferSchema(offers, 29, 199);
 ---
 
-<Layout title="Precios" noindex={true}>
+<Layout 
+  title="Precios" 
+  description="Planes de desarrollo de software a medida, automatizaciones y chatbots. Elige el plan que mejor se adapte a las necesidades de tu empresa."
+  structuredData={pricingSchema}
+>
   <Header />
   <main>
     <HeroSection 
