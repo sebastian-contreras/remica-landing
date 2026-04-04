@@ -4,28 +4,12 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import ChatDemo from "../components/ChatDemo.astro";
 
-// Extraer categorías únicas de los proyectos
-const categories = [
-  "Todos",
-  "Fintech · Financieras",
-  "Eventos · Entretenimiento",
-  "Operaciones · Seguridad",
-  "Comercial · Retail",
-  "Salud · Prepaga",
-  "SaaS · Fintech",
-  "Movilidad · Logística",
-  "Fintech · IA Crediticia",
-];
-
-// image?: string — URL de imagen (Unsplash, captura, etc.). Si se omite → muestra ícono SVG.
 const projects = [
   {
     id: "financiera",
     category: "Fintech · Financieras",
-    tag: "primary",
     title: "Sistema integral de financiera",
-    image:
-      "/images/optimized/campaign-creators-pypeCEaJeZY-unsplash.webp",
+    image: "/images/optimized/campaign-creators-pypeCEaJeZY-unsplash.webp",
     imageAlt: "Panel de gestión financiera con gráficos de préstamos",
     headline: "De la solicitud al cobro, en un solo sistema.",
     description:
@@ -41,16 +25,13 @@ const projects = [
       "Gestión multisucursal con permisos por rol",
     ],
     stack: ["Laravel", "React", "MySQL", "PDF/Firma electrónica"],
-    color: "primary",
     icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   },
   {
     id: "eventos",
     category: "Eventos · Entretenimiento",
-    tag: "accent",
     title: "Sistema de administración de eventos",
-    image:
-      "/images/optimized/yogendra-singh-Tf1FO5R2nnU-unsplash.webp",
+    image: "/images/optimized/yogendra-singh-Tf1FO5R2nnU-unsplash.webp",
     imageAlt: "Evento con luces y público, gestión de entradas y votación",
     headline: "Gestión integral de eventos, entradas y jurados en tiempo real.",
     description:
@@ -67,25 +48,15 @@ const projects = [
       "Sistema de votación o feedback del público",
       "Panel administrativo con reportes de ventas, asistencia y resultados",
     ],
-    stack: [
-      "Laravel",
-      "React",
-      "MySQL",
-      "Pasarela de pago",
-      "QR/PDF",
-      "WebSockets",
-    ],
-    color: "accent",
+    stack: ["Laravel", "React", "MySQL", "Pasarela de pago", "QR/PDF", "WebSockets"],
     icon: "M9 17V7l12-2v10M9 17c0 1.657-1.79 3-4 3s-4-1.343-4-3 1.79-3 4-3 4 1.343 4 3zm12-2c0 1.657-1.79 3-4 3s-4-1.343-4-3 1.79-3 4-3 4 1.343 4 3z",
   },
   {
     id: "cajas",
     category: "Operaciones · Seguridad",
-    tag: "accent",
     image: "/images/optimized/rc-xyz-nft-gallery--MMeeP7pjbE-unsplash.webp",
     imageAlt: "Caja de seguridad con caja de seguridad",
     title: "Sistema de gestión de cajas de seguridad",
-    // sin imagen → muestra ícono
     headline: "Control total del acceso y uso de cajas de seguridad.",
     description:
       "Plataforma de gestión para entidades que administran cajas de seguridad. Integra el control físico de accesos con el registro contractual y la trazabilidad de movimientos, eliminando el papel y los registros manuales.",
@@ -100,16 +71,13 @@ const projects = [
       "Historial de accesos por caja y por persona",
     ],
     stack: ["Laravel", "React", "MySQL", "BioStar API", "Impresión térmica"],
-    color: "accent",
     icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
   },
   {
     id: "ventas",
     category: "Comercial · Retail",
-    tag: "gold",
     title: "Sistema de gestión de ventas",
-    image:
-      "/images/optimized/shutter-speed-BQ9usyzHx_w-unsplash.webp",
+    image: "/images/optimized/shutter-speed-BQ9usyzHx_w-unsplash.webp",
     imageAlt: "Punto de venta con facturación electrónica y stock",
     headline: "Stock, facturación y sucursales en un solo lugar.",
     description:
@@ -125,13 +93,11 @@ const projects = [
       "Control de usuarios y permisos por rol",
     ],
     stack: ["Laravel", "React", "MySQL", "AFIP Web Services"],
-    color: "gold",
     icon: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z",
   },
   {
     id: "prepaga",
     category: "Salud · Prepaga",
-    tag: "primary",
     title: "Sistema de gestión de prepaga médica",
     headline: "Alta, afiliación y cobranza de principio a fin.",
     description:
@@ -146,24 +112,15 @@ const projects = [
       "Historial de pagos y deuda por titular",
       "Panel de gestión para ejecutivos de cuenta",
     ],
-    image: '/images/optimized/hush-naidoo-jade-photography-XwguHkKQqSA-unsplash.webp',
-    stack: [
-      "Laravel",
-      "React",
-      "MySQL",
-      "AFIP Web Services",
-      "Firma electrónica",
-    ],
-    color: "primary",
+    image: "/images/optimized/hush-naidoo-jade-photography-XwguHkKQqSA-unsplash.webp",
+    stack: ["Laravel", "React", "MySQL", "AFIP Web Services", "Firma electrónica"],
     icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
   },
   {
     id: "moras",
     category: "SaaS · Fintech",
-    tag: "accent",
     title: "SaaS de comunicación y gestión de moras",
-    image:
-      "/images/optimized/stephen-dawson-qwtCeJ5cLYs-unsplash.webp",
+    image: "/images/optimized/stephen-dawson-qwtCeJ5cLYs-unsplash.webp",
     imageAlt: "Dashboard de gestión de cobranzas y comunicación masiva",
     headline: "Cobranza automatizada para financieras del NOA.",
     description:
@@ -180,25 +137,14 @@ const projects = [
       "Dashboard de gestión por empresa (arquitectura SaaS)",
       "Reportes de efectividad por canal y plantilla",
     ],
-    stack: [
-      "Laravel",
-      "React",
-      "MySQL",
-      "Meta API",
-      "BCRA API",
-      "SMS Gateway",
-      "Queues",
-    ],
-    color: "accent",
+    stack: ["Laravel", "React", "MySQL", "Meta API", "BCRA API", "SMS Gateway", "Queues"],
     icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
   },
   {
     id: "viajes",
     category: "Movilidad · Logística",
-    tag: "gold",
     title: "Sistema de gestión de viajes",
-    image:
-      "/images/optimized/antonio-araujo--eUrpy0fjXE-unsplash.webp",
+    image: "/images/optimized/antonio-araujo--eUrpy0fjXE-unsplash.webp",
     imageAlt: "Vehículo de transporte privado con seguimiento GPS",
     headline: "Conectamos clientes con choferes, con trazabilidad total.",
     description:
@@ -214,21 +160,12 @@ const projects = [
       "Seguimiento de estado del viaje (pendiente, en curso, finalizado)",
       "Panel administrativo con reportes de uso y facturación",
     ],
-    stack: [
-      "Laravel",
-      "React",
-      "MySQL",
-      "Google Maps API",
-      "WebSockets",
-      "WhatsApp API",
-    ],
-    color: "gold",
+    stack: ["Laravel", "React", "MySQL", "Google Maps API", "WebSockets", "WhatsApp API"],
     icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z",
   },
   {
     id: "motor",
     category: "Fintech · IA Crediticia",
-    tag: "primary",
     image: "/images/optimized/isaac-smith-Ij7h-m4nJ18-unsplash.webp",
     imageAlt: "Motor de decisiones crediticias con interfaz de usuario",
     title: "Motor de decisiones crediticias",
@@ -247,78 +184,17 @@ const projects = [
       "Versionado de motores con comparación de resultados",
     ],
     stack: ["Laravel", "React", "MySQL", "APIs crediticias", "Motor de reglas"],
-    color: "primary",
     icon: "M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18",
   },
 ];
-
-const colorMap: Record<
-  string,
-  {
-    badge: string;
-    icon: string;
-    featureCheck: string;
-    border: string;
-    bar: string;
-    tagBg: string;
-    overlayBg: string;
-  }
-> = {
-  primary: {
-    badge:
-      "bg-primary-50 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400",
-    icon: "text-primary-500 dark:text-primary-400",
-    featureCheck: "text-primary-500 dark:text-primary-400",
-    border:
-      "border-primary-100 dark:border-primary-900 hover:border-primary-300 dark:hover:border-primary-700",
-    bar: "bg-primary-500",
-    tagBg:
-      "bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300",
-    overlayBg: "from-black/60 via-black/20 to-transparent",
-  },
-  accent: {
-    badge:
-      "bg-accent-50 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400",
-    icon: "text-accent-500 dark:text-accent-400",
-    featureCheck: "text-accent-500 dark:text-accent-400",
-    border:
-      "border-accent-100 dark:border-accent-900/40 hover:border-accent-300 dark:hover:border-accent-700",
-    bar: "bg-accent-400",
-    tagBg:
-      "bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300",
-    overlayBg: "from-black/60 via-black/20 to-transparent",
-  },
-  gold: {
-    badge: "bg-gold-50 dark:bg-gold-900/30 text-gold-700 dark:text-gold-400",
-    icon: "text-gold-600 dark:text-gold-400",
-    featureCheck: "text-gold-500 dark:text-gold-400",
-    border:
-      "border-gold-100 dark:border-gold-900/30 hover:border-gold-300 dark:hover:border-gold-700",
-    bar: "bg-gold-400",
-    tagBg: "bg-gold-50 dark:bg-gold-900/30 text-gold-700 dark:text-gold-400",
-    overlayBg: "from-black/60 via-black/20 to-transparent",
-  },
-};
-
-// Pasar datos al cliente
-const allProjects = projects;
-const allCategories = categories;
 ---
-
-<!-- Pasar datos al cliente via variable global -->
-<script define:vars={{ allProjects, allCategories }}>
-  window.__portfolioData = {
-    projects: allProjects,
-    categories: allCategories
-  };
-</script>
 
 <Layout
   title="Portafolio de proyectos"
   description="Explora proyectos reales desarrollados por Rumica: sistemas financieros, SaaS, plataformas operativas, automatizaciones y software a medida en produccion."
 >
   <Header />
-  <main x-data="portfolioFilter">
+  <main>
     <!-- ─── HERO ──────────────────────────────────────────────── -->
     <section
       class="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-24 overflow-hidden bg-primary-950"
@@ -383,90 +259,72 @@ const allCategories = categories;
       </div>
     </section>
 
-    <!-- ─── PROYECTOS CON FILTRO ──────────────────────────────── -->
+    <!-- ─── PROYECTOS ─────────────────────────────────────────── -->
     <section class="section pb-16 md:pb-24 bg-secondary-50 dark:bg-secondary-900/50">
       <div class="container-custom">
-        <!-- Filtro de categorías -->
-        <div class="flex flex-wrap gap-2 mb-8 justify-center">
-          <template x-for="cat in categories" :key="cat">
-            <button 
-              @click="activeCategory = cat"
-              :class="{
-                'bg-primary-600 text-white border-primary-600': activeCategory === cat,
-                'bg-white dark:bg-secondary-800 text-secondary-600 dark:text-secondary-300 border-secondary-200 dark:border-secondary-700 hover:border-primary-400': activeCategory !== cat
-              }"
-              class="px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200"
-            >
-              <span x-text="cat"></span>
-            </button>
-          </template>
-        </div>
-
-        <!-- Grid de proyectos filtrados - Vista completa sin interactividad -->
         <div class="grid md:grid-cols-2 gap-8">
-          <template x-for="proj in filteredProjects" :key="proj.id">
+          {projects.map((proj) => (
             <article class="project-card bg-white dark:bg-secondary-800 rounded-2xl border border-secondary-200 dark:border-secondary-700 overflow-hidden hover:shadow-xl hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300">
               <!-- Imagen o placeholder -->
               <div class="relative h-48 overflow-hidden bg-secondary-100 dark:bg-secondary-700">
-                <template x-if="proj.image">
-                  <img 
-                    :src="proj.image" 
-                    :alt="proj.imageAlt || proj.title"
+                {proj.image ? (
+                  <img
+                    src={proj.image}
+                    alt={proj.imageAlt || proj.title}
                     class="w-full h-full object-cover"
                     loading="lazy"
                   />
-                </template>
-                <template x-if="!proj.image">
+                ) : (
                   <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30">
                     <svg class="w-16 h-16 text-primary-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="proj.icon"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={proj.icon} />
                     </svg>
                   </div>
-                </template>
-                
+                )}
+
                 <!-- Overlay con categoría -->
                 <div class="absolute top-3 left-3">
                   <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-white/90 dark:bg-secondary-900/90 text-secondary-700 dark:text-secondary-300 backdrop-blur-sm">
-                    <span x-text="proj.category.split(' · ')[0]"></span>
+                    {proj.category.split(" · ")[0]}
                   </span>
                 </div>
               </div>
 
-              <!-- Contenido completo -->
+              <!-- Contenido -->
               <div class="p-6">
                 <h3 class="font-bold text-xl text-secondary-900 dark:text-white mb-2">
-                  <span x-text="proj.title"></span>
+                  {proj.title}
                 </h3>
                 <p class="text-primary-600 dark:text-primary-400 font-medium mb-3">
-                  <span x-text="proj.headline"></span>
+                  {proj.headline}
                 </p>
                 <p class="text-secondary-600 dark:text-secondary-400 mb-4 text-sm leading-relaxed">
-                  <span x-text="proj.description"></span>
+                  {proj.description}
                 </p>
 
-                <!-- Stack tech completo -->
+                <!-- Stack -->
                 <div class="flex flex-wrap gap-2 mb-5">
-                  <template x-for="tech in proj.stack" :key="tech">
+                  {proj.stack.map((tech) => (
                     <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
-                      <span x-text="tech"></span>
+                      {tech}
                     </span>
-                  </template>
+                  ))}
                 </div>
 
-                <!-- Features completas - siempre visibles -->
+                <!-- Features -->
                 <div class="border-t border-secondary-200 dark:border-secondary-700 pt-4">
                   <h4 class="text-xs font-semibold text-secondary-500 dark:text-secondary-400 uppercase tracking-wider mb-3">
                     Funcionalidades
                   </h4>
                   <ul class="grid grid-cols-1 gap-2">
-                    <template x-for="feature in proj.features" :key="feature">
+                    {proj.features.map((feature) => (
                       <li class="flex items-start gap-2 text-sm text-secondary-600 dark:text-secondary-400">
                         <svg class="w-4 h-4 mt-0.5 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span x-text="feature"></span>
+                        {feature}
                       </li>
-                    </template>
+                    ))}
                   </ul>
                 </div>
 
@@ -476,19 +334,13 @@ const allCategories = categories;
                 </div>
               </div>
             </article>
-          </template>
-        </div>
-
-        <!-- Sin resultados -->
-        <div x-show="filteredProjects.length === 0" class="text-center py-16">
-          <p class="text-secondary-500">No hay proyectos en esta categoría.</p>
+          ))}
         </div>
       </div>
     </section>
 
     <!-- ─── DEMOS DE CHATBOTS ───────────────────────────────── -->
     <section class="section bg-gradient-to-b from-primary-950 to-primary-900 relative overflow-hidden">
-      <!-- Fondo decorativo -->
       <div class="absolute inset-0 opacity-5">
         <svg class="absolute right-0 top-0 h-full w-1/2" viewBox="0 0 400 700" xmlns="http://www.w3.org/2000/svg">
           {
@@ -508,7 +360,6 @@ const allCategories = categories;
       </div>
 
       <div class="container-custom relative z-10">
-        <!-- Encabezado -->
         <div class="text-center max-w-2xl mx-auto mb-10">
           <span class="badge-gold mb-4">Prueba gratis</span>
           <h2 class="text-white mb-4">
@@ -516,32 +367,30 @@ const allCategories = categories;
             <span class="text-gold-400">nuestros chatbots?</span>
           </h2>
           <p class="text-primary-200 text-base leading-relaxed">
-            Chateá con nuestros asistentes virtuales de demostración. 
+            Chateá con nuestros asistentes virtuales de demostración.
             Cada chatbot reproduce flujos reales: consultas, solicitudes, turnos y más.
           </p>
         </div>
 
-        <!-- Componente de chat -->
         <div class="max-w-3xl mx-auto">
-          <ChatDemo 
+          <ChatDemo
             chatbots={[
-              { 
-                id: "financiera", 
-                name: "Financiera NOA", 
+              {
+                id: "financiera",
+                name: "Financiera NOA",
                 icon: "🏦",
-                description: "Chatbot de atención financiera con consulta de préstamos, solicitud de créditos, productos, turnos y reclamos."
+                description: "Chatbot de atención financiera con consulta de préstamos, solicitud de créditos, productos, turnos y reclamos.",
               },
-              { 
-                id: "mecanico", 
-                name: "Centro Mecánico", 
+              {
+                id: "mecanico",
+                name: "Centro Mecánico",
                 icon: "🔧",
-                description: "Chatbot de atención mecánica con gestión de turnos, cotización de servicios y consulta de trabajos."
-              }
+                description: "Chatbot de atención mecánica con gestión de turnos, cotización de servicios y consulta de trabajos.",
+              },
             ]}
           />
         </div>
 
-        <!-- Info adicional -->
         <div class="mt-8 text-center">
           <p class="text-primary-300 text-sm">
             💡 <strong>¿Te gustó?</strong> Podemos crear un chatbot personalizado para tu negocio.
@@ -549,7 +398,7 @@ const allCategories = categories;
           <a href="/#contacto" class="inline-flex items-center gap-2 mt-3 text-gold-400 hover:text-gold-300 transition-colors">
             <span>Contactanos para cotizar</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
         </div>
@@ -560,18 +409,10 @@ const allCategories = categories;
     <section class="section bg-white dark:bg-primary-950">
       <div class="container-custom max-w-3xl text-center">
         <div class="flex justify-center mb-5">
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 60 60"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect x="4" y="4" width="52" height="18" rx="4" fill="#D4A017"
-            ></rect>
-            <rect x="4" y="28" width="30" height="22" rx="4" fill="#B5451B"
-            ></rect>
-            <rect x="38" y="34" width="18" height="16" rx="4" fill="#E07B39"
-            ></rect>
+          <svg width="48" height="48" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="52" height="18" rx="4" fill="#D4A017" />
+            <rect x="4" y="28" width="30" height="22" rx="4" fill="#B5451B" />
+            <rect x="38" y="34" width="18" height="16" rx="4" fill="#E07B39" />
           </svg>
         </div>
         <h2 class="heading mb-4">
@@ -590,51 +431,4 @@ const allCategories = categories;
     </section>
   </main>
   <Footer />
-
-<!-- Alpine.js Portfolio Filter Logic -->
-<script>
-  document.addEventListener('alpine:init', () => {
-    Alpine.data('portfolioFilter', () => ({
-      categories: [],
-      projects: [],
-      activeCategory: 'Todos',
-      selectedProject: null,
-      showModal: false,
-      
-      init() {
-        if (typeof window.__portfolioData !== 'undefined') {
-          this.categories = window.__portfolioData.categories;
-          this.projects = window.__portfolioData.projects;
-        }
-      },
-      
-      get filteredProjects() {
-        if (this.activeCategory === 'Todos') {
-          return this.projects;
-        }
-        return this.projects.filter(p => p.category === this.activeCategory);
-      },
-      
-      openProject(proj) {
-        this.selectedProject = proj;
-        this.showModal = true;
-        document.body.style.overflow = 'hidden';
-      },
-      
-      toggleProject(id) {
-        if (this.selectedProject === id) {
-          this.selectedProject = null;
-        } else {
-          this.selectedProject = id;
-        }
-      },
-      
-      closeProject() {
-        this.showModal = false;
-        this.selectedProject = null;
-        document.body.style.overflow = '';
-      }
-    }));
-  });
-</script>
 </Layout>
