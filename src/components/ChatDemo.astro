@@ -31,38 +31,43 @@ const { chatbots } = Astro.props;
   class="chat-demo-container"
 >
   <!-- Selector de chatbots - Mejorado -->
-  <div class="chatbot-selector mb-8">
-    <p class="text-sm text-primary-200 mb-4 font-medium flex items-center gap-2">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-      </svg>
-      Elegí un chatbot para probar:
-    </p>
-    <div class="grid sm:grid-cols-2 gap-3">
-      <template x-for="bot in chatbots" :key="bot.id">
-        <button 
-          @click="selectChatbot(bot.id)"
-          :class="{
-            'ring-2 ring-gold-400 bg-gold-500/10 border-gold-400': selectedChatbot === bot.id,
-            'hover:ring-2 hover:ring-primary-400 bg-primary-900/30 border-primary-700/50': selectedChatbot !== bot.id
-          }"
-          class="chatbot-option group flex items-center gap-3 p-4 rounded-xl 
-                 border transition-all duration-200 text-left"
+<!-- Selector de chatbots - Estático (renderizado por Astro) -->
+<div class="chatbot-selector mb-8">
+  <p class="text-sm text-primary-200 mb-4 font-medium flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+    </svg>
+    Elegí un chatbot para probar:
+  </p>
+  <div class="grid sm:grid-cols-2 gap-3">
+    {chatbots.map((bot) => (
+      <button 
+        data-bot-id={bot.id}
+        @click={`selectChatbot('${bot.id}')`}
+        :class={`selectedChatbot === '${bot.id}'
+          ? 'ring-2 ring-gold-400 bg-gold-500/10 border-gold-400'
+          : 'hover:ring-2 hover:ring-primary-400 bg-primary-900/30 border-primary-700/50'`}
+        class="chatbot-option group flex items-center gap-3 p-4 rounded-xl border transition-all duration-200 text-left"
+      >
+        <div class="w-12 h-12 rounded-xl bg-primary-800/50 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+          {bot.icon}
+        </div>
+        <div class="flex-1 min-w-0">
+          <span class="font-semibold text-white block">{bot.name}</span>
+          <span class="text-xs text-primary-300 line-clamp-1">{bot.description}</span>
+        </div>
+        <svg 
+          x-show={`selectedChatbot === '${bot.id}'`}
+          class="w-5 h-5 text-gold-400 flex-shrink-0" 
+          fill="currentColor" 
+          viewBox="0 0 20 20"
         >
-          <div class="w-12 h-12 rounded-xl bg-primary-800/50 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-            <span x-text="bot.icon"></span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <span class="font-semibold text-white block" x-text="bot.name"></span>
-            <span class="text-xs text-primary-300 line-clamp-1" x-text="bot.description"></span>
-          </div>
-          <svg x-show="selectedChatbot === bot.id" class="w-5 h-5 text-gold-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-          </svg>
-        </button>
-      </template>
-    </div>
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    ))}
   </div>
+</div>
 
   <!-- Área del chat -->
   <div 
