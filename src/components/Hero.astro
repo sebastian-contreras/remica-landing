@@ -1,5 +1,52 @@
 ---
 ---
+<script>
+  // Animación de conteo ascendente
+  function animateCountUp() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const text = el.dataset.target || el.textContent || '';
+          
+          // Extraer número y sufijo
+          const match = text.match(/^(\d+)(\+|%)?$/);
+          if (!match) return;
+          
+          const target = parseInt(match[1], 10);
+          const suffix = match[2] || '';
+          const duration = 1000;
+          const start = performance.now();
+          
+          function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing: ease-out expo
+            const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            const current = Math.floor(target * eased);
+            
+            el.textContent = current + suffix;
+            
+            if (progress < 1) {
+              requestAnimationFrame(update);
+            } else {
+              el.textContent = text; // Mostrar valor final (incluye +)
+            }
+          }
+          
+          requestAnimationFrame(update);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    document.querySelectorAll('.count-up').forEach(el => observer.observe(el));
+  }
+  
+  document.addEventListener('DOMContentLoaded', animateCountUp);
+</script>
+
 <section class="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-24 overflow-hidden bg-white dark:bg-primary-950">
 
   <!-- Fondo: patrón geométrico andino sutil -->
@@ -170,7 +217,7 @@
             { num: '100%', label: 'Proyectos en producción' },
           ].map(stat => (
             <div class="reveal">
-              <div class="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-semibold text-gold-400 mb-2">
+              <div class="text-3xl md:text-4xl lg:text-[2.75rem] font-display font-semibold text-gold-400 mb-2 count-up" data-target={stat.num}>
                 {stat.num}
               </div>
               <div class="text-xs md:text-sm text-secondary-400 uppercase tracking-wider">{stat.label}</div>
